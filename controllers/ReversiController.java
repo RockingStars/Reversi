@@ -62,7 +62,7 @@ public class ReversiController extends AbstractGame {
     @Override
     public void doPlayerMove(int x, int y) {
         if (!gameFinished()) {
-            if (_model.isValidMove(x, y)) {
+            if (_model.isValidMove(x, y, currentPlayer)) {
                 if (yourTurn) {
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
 

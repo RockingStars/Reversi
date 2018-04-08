@@ -46,9 +46,9 @@ public class ReversiModel {
         _board[4][3] = black;
         _board[4][4] = white;
 
-        for (int x = 3; x < 5; x++)
-            for (int y = 3; y < 5; y++)
-                _view.setCellImage(x, y);
+        for (int y = 3; y < 5; y++)
+            for (int x = 3; x < 5; x++)
+                _view.setCellImage(y, x);
     }
 
     public Player[][] getBoard() {
@@ -60,11 +60,35 @@ public class ReversiModel {
         _view.getNewGameButton().setOnAction(e -> clearBoard());
     }
 
-    public boolean isValidMove(int x, int y) {
-        if (x > 8 || y > 8 || x < 0 || y < 0)
+    public boolean isValidMove(int x, int y, Player player) {
+        if (x > 8 || y > 8 || x < 0 || y < 0 || _board[y][x] != null)
             return false;
 
-        return _board[x][y] == null;
+        // Test if this is a valid move by checking how many tiles would be flipped
+        // Note: inspired by: https://inventwithpython.com/chapter15.html
+        int directions[][] = {
+            {0, 1}, {1, 1}, {1, 0}, {1, -1},
+            {0, -1}, {-1, 0}, {-1, -1}, {-1, 1}
+        };
+
+        for (int[] direction : directions) {
+            int posX = direction[0] + 1;
+            int posY = direction[1] + 1;
+
+            while (posX < _board.length && posY < _board.length && _board[posY][posX] != player && _board[posY][posX] != null) {
+                posX += direction[0];
+                posY += direction[1];
+            }
+
+            if (_board[posY][posX] == player)
+                return true;
+        }
+
+        return false;
+    }
+
+    public void switchTiles(int x1, int y1, int x2, int y2) {
+        // switch tiles here
     }
 
     public void setPlayerAtPosition(Player player, int x, int y) {
@@ -81,8 +105,8 @@ public class ReversiModel {
     }
 
     public void createCells() {
-        for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 8; j++)
+        for (int i = 0; i < _board.length; i++)
+            for (int j = 0; j < _board[i].length; j++)
                 _board[i][j] = null;
     }
 
@@ -91,12 +115,23 @@ public class ReversiModel {
     }
 
     public boolean isFull() {
-        for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 8; j++)
+        for (int i = 0; i < _board.length; i++)
+            for (int j = 0; j < _board[i].length; j++)
                 if (_board[i][j] == null)
                     return false;
 
         return true;
+    }
+
+    public int getScoreForPlayer(Player player) {
+        int score = 0;
+
+        for (int i = 0; i < _board.length; i++)
+            for (int j = 0; j < _board[i].length; j++)
+                if (_board[i][j] != null && _board[i][j] == player)
+                    score++;
+
+        return score;
     }
 
     public String getTurnMessage(Player player) {
