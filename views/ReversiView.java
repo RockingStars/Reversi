@@ -26,6 +26,7 @@ import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.controllers.ReversiController;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -33,6 +34,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -106,8 +108,8 @@ public class ReversiView {
     public void generateBoardVisual() {
         _pane.getChildren().clear();
 
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++)
                 setCellImage(i, j);
     }
 
@@ -122,11 +124,11 @@ public class ReversiView {
         try {
             if (_board[x][y] != null) {
                 switch (_board[x][y].getCharacter()) {
-                    case 'x':
-                        fileName = "black.gif";
+                    case 'b':
+                        fileName = "black.png";
                         break;
-                    case 'o':
-                        fileName = "white.gif";
+                    case 'w':
+                        fileName = "light.png";
                         break;
                     default:
                         fileName = null;
@@ -143,6 +145,26 @@ public class ReversiView {
             Util.exit("Loading Reversi images");
         }
 
+        Platform.runLater(() -> {
+            if (_board[x][y] == null) {
+                final int tempX = x;
+                final int tempY = y;
+
+                imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (!_isFinished && _controller.getIsYourTurn()) {
+                            imageView.setImage(null);
+                            _controller.doPlayerMove(tempX, tempY);
+                            imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
+                        }
+                        else if (!_controller.getIsYourTurn())
+                            _errorStatus.setText("It's not your turn.");
+                    }
+                });
+            }
+            _pane.add(imageView, x, y);
+        });
     }
 
     public Button getNewGameButton() {
