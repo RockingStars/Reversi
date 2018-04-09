@@ -73,37 +73,50 @@ public class ReversiModel {
             return false;
 
         // Note: inspired by: https://inventwithpython.com/chapter15.html
-        int x = baseX;
-        int y = baseY;
         // houd bij welke tiles geflipt moeten worden
         ArrayList<Integer> tilesToFlip = new ArrayList<>();
 
         for(int[] direction : DIRECTIONS) {
+            int x = baseX;
+            int y = baseY;
             x += direction[0];
             y += direction[1];
 
-            if(moveIsOnBoard(x,y) && _board[y][x] == opponent){
+            if(moveIsOnBoard(x,y) && _board[x][y] == opponent){
                 // There is a piece belonging to the other player next to our piece.
-                tilesToFlip.add(y * 8 + x); // add first neighbour opponent
+                //tilesToFlip.add(y * 8 + x); // add first neighbour opponent
                 x += direction[0];
                 y += direction[1]; // one step deeper
 
                 if(!moveIsOnBoard(x,y)){
                     continue;
                 }
-                while( _board[y][x] == opponent){
-
-                    tilesToFlip.add(y * 8 + x); // add second neighbour opponent
-
+                while(_board[x][y] == opponent) {
+                    System.out.println("doe je deze wel?");
+                    //tilesToFlip.add(y * 8 + x); // add second neighbour opponent
                     x += direction[0];  // one step deeper
                     y += direction[1];
-                    if(!moveIsOnBoard(x,y)){
+                    if (!moveIsOnBoard(x, y)) {
                         break;
                     }
-                    if(_board[y][x] == _board[baseY][baseX]){
-                        System.out.println("yo eind gevonden");
-                    }
                 }
+                if (!moveIsOnBoard(x, y)) {
+                    continue;
+                }
+
+                if(_board[x][y] == _board[baseX][baseY]){
+                    while(true){
+                        System.out.println("komt hier wel --------------------");
+                        x -= direction[0];
+                        y -= direction[1];
+                        if(x == baseX && y == baseY){
+                            break;
+                        }
+                        tilesToFlip.add(y * 8 + x);
+                    }
+                    //System.out.println("yo eind gevonden bij direction" + direction[0] + "," + direction[1]);
+                }
+
             }
         }
 
