@@ -66,6 +66,7 @@ public class ReversiController extends AbstractGame {
                 if (yourTurn) {
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
 
+                    _model.switchTiles(x, y, currentPlayer);
                     _model.setPlayerAtPosition(currentPlayer, x, y);
                     _view.setCellImage(x, y);
 
@@ -92,6 +93,7 @@ public class ReversiController extends AbstractGame {
             int x = position % 8;
             int y = position / 8;
 
+            _model.switchTiles(x, y, currentPlayer);
             _model.setPlayerAtPosition(currentPlayer, x, y);
             _view.setCellImage(x, y);
 

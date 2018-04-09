@@ -27,11 +27,18 @@ import com.rockingstar.modules.Reversi.views.ReversiView;
 
 import javafx.application.Platform;
 
+import java.util.LinkedList;
+
 public class ReversiModel {
 
     private ReversiView _view;
 
     private Player[][] _board = new Player[8][8];
+
+    private static final int DIRECTIONS[][] = {
+            {0, 1}, {1, 1}, {1, 0}, {1, -1},
+            {0, -1}, {-1, 0}, {-1, -1}, {-1, 1}
+    };
 
     public ReversiModel(ReversiView view) {
         _view = view;
@@ -61,34 +68,74 @@ public class ReversiModel {
     }
 
     public boolean isValidMove(int x, int y, Player player) {
-        if (x > 8 || y > 8 || x < 0 || y < 0 || _board[y][x] != null)
+        if (x > 7 || y > 7 || x < 0 || y < 0 || _board[x][y] != null)
             return false;
 
-        // Test if this is a valid move by checking how many tiles would be flipped
         // Note: inspired by: https://inventwithpython.com/chapter15.html
-        int directions[][] = {
-            {0, 1}, {1, 1}, {1, 0}, {1, -1},
-            {0, -1}, {-1, 0}, {-1, -1}, {-1, 1}
-        };
+        for (int[] direction : DIRECTIONS) {
+            /*int posX = x + direction[0];
+            int posY = y + direction[1];
 
-        for (int[] direction : directions) {
-            int posX = direction[0] + 1;
-            int posY = direction[1] + 1;
-
-            while (posX < _board.length && posY < _board.length && _board[posY][posX] != player && _board[posY][posX] != null) {
+            while (posX < _board.length - 1 && posY < _board.length - 1 && posX > 0 && posY > 0) {
                 posX += direction[0];
                 posY += direction[1];
-            }
 
-            if (_board[posY][posX] == player)
+                if (_board[posY][posX] == player)
+                    return true;
+                else if (_board[posY][posX] != player && _board[posY][posX] != null)
+                    break;
+            }*/
+
+            if (canMoveInDirection(x, y, direction[0], direction[1], player))
                 return true;
         }
 
         return false;
     }
 
-    public void switchTiles(int x1, int y1, int x2, int y2) {
-        // switch tiles here
+    private boolean canMoveInDirection(int baseX, int baseY, int dirX, int dirY, Player player) {
+        int posX = baseX + dirX;
+        int posY = baseY + dirY;
+
+        while (posX < _board.length - 1 && posY < _board.length - 1 && posX > 0 && posY > 0) {
+            posX += dirX;
+            posY += dirY;
+
+            if (_board[posY][posX] == player)
+                return true;
+            else if (_board[posY][posX] != player && _board[posY][posX] != null)
+                break;
+        }
+
+        return false;
+    }
+
+    public void switchTiles(int x, int y, Player player) {
+        LinkedList<Integer> tilesToFlip = new LinkedList<>();
+
+        for (int[] direction : DIRECTIONS) {
+            int posX = x;
+            int posY = y;
+
+            if (!canMoveInDirection(x, y, direction[0], direction[1], player))
+                continue;
+
+            while (posX < _board.length - 1 && posY < _board.length - 1 && posX > 0 && posY > 0) {
+                posX += direction[0];
+                posY += direction[1];
+
+                if (_board[posY][posX] != player && _board[posY][posX] != null)
+                    tilesToFlip.add(posY * 8 + posX);
+
+                else if (_board[posY][posX] == player || _board[posY][posX] == null)
+                    break;
+            }
+        }
+
+        for (Integer tile : tilesToFlip) {
+            _board[tile % 8][tile / 8] = player;
+            _view.setCellImage(tile % 8, tile / 8);
+        }
     }
 
     public void setPlayerAtPosition(Player player, int x, int y) {
