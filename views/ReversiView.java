@@ -154,6 +154,7 @@ public class ReversiView {
                     @Override
                     public void handle(MouseEvent event) {
                         if (!_isFinished && _controller.getIsYourTurn()) {
+                            System.out.printf("Zeg makker. Dit is het veld op coordinaten (%d, %d)\n", x, y);
                             _controller.doPlayerMove(tempX, tempY);
                             imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
                         }

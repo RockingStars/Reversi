@@ -133,7 +133,7 @@ public class ReversiController extends AbstractGame {
 
         setGameState(State.GAME_FINISHED);
 
-        Platform.runLater(() -> {
+        /*Platform.runLater(() -> {
             Alert returnToLobby = new Alert(Alert.AlertType.CONFIRMATION);
 
             returnToLobby.setTitle("Game ended!");
@@ -143,7 +143,7 @@ public class ReversiController extends AbstractGame {
 
             if (returnToLobby.getResult() == ButtonType.OK)
                 toLobby();
-        });
+        });*/
     }
 
     public void setStartingPlayer(Player player) {
