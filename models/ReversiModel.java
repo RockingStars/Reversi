@@ -97,10 +97,10 @@ public class ReversiModel {
         int posX = baseX + dirX;
         int posY = baseY + dirY;
 
-        while (posX < _board.length - 1 && posY < _board.length - 1 && posX > 0 && posY > 0) {
+        while (moveIsOnBoard(posX, posY)) {
             posX += dirX;
             posY += dirY;
-
+            System.out.println("------------------- MOVE IS ON BOARD");
             if (_board[posY][posX] == player)
                 return true;
             else if (_board[posY][posX] != player && _board[posY][posX] != null)
@@ -108,6 +108,13 @@ public class ReversiModel {
         }
 
         return false;
+    }
+
+    public boolean moveIsOnBoard(int x, int y){
+        if(x < _board.length - 1 || y < _board.length - 1 || x > 0 || y > 0){
+            return false;
+        }
+        return true;
     }
 
     public void switchTiles(int x, int y, Player player) {
@@ -131,7 +138,7 @@ public class ReversiModel {
                     break;
             }
         }
-
+        //System.out.println(tilesToFlip);
         for (Integer tile : tilesToFlip) {
             _board[tile % 8][tile / 8] = player;
             _view.setCellImage(tile % 8, tile / 8);

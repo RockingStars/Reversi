@@ -41,6 +41,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.awt.*;
 import java.net.URISyntaxException;
 
 public class ReversiView {
@@ -128,7 +129,7 @@ public class ReversiView {
                         fileName = "black.png";
                         break;
                     case 'w':
-                        fileName = "light.png";
+                        fileName = "white.png";
                         break;
                     default:
                         fileName = null;
@@ -140,7 +141,6 @@ public class ReversiView {
             else
                 imageView.setImage(new Image(getClass().getClassLoader().getResource("com/rockingstar/modules/Reversi/empty.png").toURI().toString()));
         }
-
         catch (URISyntaxException | NullPointerException e) {
             Util.exit("Loading Reversi images");
         }
@@ -154,7 +154,6 @@ public class ReversiView {
                     @Override
                     public void handle(MouseEvent event) {
                         if (!_isFinished && _controller.getIsYourTurn()) {
-                            imageView.setImage(null);
                             _controller.doPlayerMove(tempX, tempY);
                             imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
                         }
