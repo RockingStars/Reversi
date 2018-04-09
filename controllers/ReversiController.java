@@ -75,7 +75,6 @@ public class ReversiController extends AbstractGame {
                 }
                 else
                     _view.setErrorStatus("It's not your turn");
-
             }
             else
                 _view.setErrorStatus("Invalid move");

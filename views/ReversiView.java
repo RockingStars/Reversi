@@ -147,8 +147,8 @@ public class ReversiView {
 
         Platform.runLater(() -> {
             if (_board[x][y] == null) {
-                final int tempX = x;
-                final int tempY = y;
+                int tempX = x;
+                int tempY = y;
 
                 imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
                     @Override
