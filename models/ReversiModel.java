@@ -27,6 +27,7 @@ import com.rockingstar.modules.Reversi.views.ReversiView;
 
 import javafx.application.Platform;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class ReversiModel {
@@ -67,40 +68,65 @@ public class ReversiModel {
         _view.getNewGameButton().setOnAction(e -> clearBoard());
     }
 
-    public boolean isValidMove(int x, int y, Player player) {
-        if (x > 7 || y > 7 || x < 0 || y < 0 || _board[x][y] != null)
+    public boolean isValidMove(int baseX, int baseY, Player player, Player opponent) {
+        if (!moveIsOnBoard(baseX,baseY) || _board[baseX][baseY] != null)
             return false;
 
         // Note: inspired by: https://inventwithpython.com/chapter15.html
-        for (int[] direction : DIRECTIONS) {
-            /*int posX = x + direction[0];
-            int posY = y + direction[1];
+        int x = baseX;
+        int y = baseY;
+        // houd bij welke tiles geflipt moeten worden
+        ArrayList<Integer> tilesToFlip = new ArrayList<>();
 
-            while (posX < _board.length - 1 && posY < _board.length - 1 && posX > 0 && posY > 0) {
-                posX += direction[0];
-                posY += direction[1];
+        for(int[] direction : DIRECTIONS) {
+            x += direction[0];
+            y += direction[1];
 
-                if (_board[posY][posX] == player)
-                    return true;
-                else if (_board[posY][posX] != player && _board[posY][posX] != null)
-                    break;
-            }*/
+            if(moveIsOnBoard(x,y) && _board[y][x] == opponent){
+                // There is a piece belonging to the other player next to our piece.
+                tilesToFlip.add(y * 8 + x); // add first neighbour opponent
+                x += direction[0];
+                y += direction[1]; // one step deeper
 
-            if (canMoveInDirection(x, y, direction[0], direction[1], player))
-                return true;
+                if(!moveIsOnBoard(x,y)){
+                    continue;
+                }
+                while( _board[y][x] == opponent){
+
+                    tilesToFlip.add(y * 8 + x); // add second neighbour opponent
+
+                    x += direction[0];  // one step deeper
+                    y += direction[1];
+                    if(!moveIsOnBoard(x,y)){
+                        break;
+                    }
+                    if(_board[y][x] == _board[baseY][baseX]){
+                        System.out.println("yo eind gevonden");
+                    }
+                }
+            }
         }
 
-        return false;
+        System.out.println("Tiles to flip" + tilesToFlip);
+        if(tilesToFlip.size() == 0){
+            return false;
+        }
+        for (Integer tile : tilesToFlip) {
+            // waarschijnlijk wel goed
+            _board[tile % 8][tile / 8] = player;
+            _view.setCellImage(tile % 8, tile / 8);
+
+        }
+        return true;
     }
 
-    private boolean canMoveInDirection(int baseX, int baseY, int dirX, int dirY, Player player) {
+    private boolean canMoveInDirection(int baseX, int baseY, int dirX, int dirY, Player player,Player opponent) {
         int posX = baseX + dirX;
         int posY = baseY + dirY;
 
         while (moveIsOnBoard(posX, posY)) {
             posX += dirX;
             posY += dirY;
-            System.out.println("------------------- MOVE IS ON BOARD");
             if (_board[posY][posX] == player)
                 return true;
             else if (_board[posY][posX] != player && _board[posY][posX] != null)
@@ -111,10 +137,10 @@ public class ReversiModel {
     }
 
     public boolean moveIsOnBoard(int x, int y){
-        if(x < _board.length - 1 || y < _board.length - 1 || x > 0 || y > 0){
-            return false;
+        if(x < _board.length -1 && y < _board.length - 1 && x > 0 && y > 0){
+            return true;
         }
-        return true;
+        return false;
     }
 
     public void switchTiles(int x, int y, Player player) {
@@ -124,8 +150,8 @@ public class ReversiModel {
             int posX = x;
             int posY = y;
 
-            if (!canMoveInDirection(x, y, direction[0], direction[1], player))
-                continue;
+            /*if (!canMoveInDirection(x, y, direction[0], direction[1], player))
+                continue;*/
 
             while (posX < _board.length - 1 && posY < _board.length - 1 && posX > 0 && posY > 0) {
                 posX += direction[0];
@@ -138,10 +164,12 @@ public class ReversiModel {
                     break;
             }
         }
-        //System.out.println(tilesToFlip);
+
         for (Integer tile : tilesToFlip) {
+            // waarschijnlijk wel goed
             _board[tile % 8][tile / 8] = player;
             _view.setCellImage(tile % 8, tile / 8);
+
         }
     }
 
