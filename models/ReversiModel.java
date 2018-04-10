@@ -82,9 +82,7 @@ public class ReversiModel {
     }
 
     public LinkedList<Integer> getFlippableTiles(int baseX, int baseY, Player player) {
-
         LinkedList<Integer> tilesToFlip = new LinkedList<>();
-
 
         char currentPlayer = player.getCharacter();
         char opponent = currentPlayer == 'b' ? 'w': 'b';
@@ -145,14 +143,12 @@ public class ReversiModel {
         return getFlippableTiles(x, y, player).size() > 0;
     }
 
-
     public boolean moveIsOnBoard(int x, int y){
         if (x < _board.length && y < _board.length && x >= 0 && y >= 0){
             return true;
         }
         return false;
     }
-
 
     public ArrayList<Integer> getPossibleMoves(Player player){
         ArrayList<Integer> possibleMoves = new ArrayList<>();
@@ -162,7 +158,7 @@ public class ReversiModel {
                     if (isValidMove(j, i, player)) {
                         possibleMoves.add(j * 8 + i);
                         setPlayerAtPosition(_ghost,j,i);
-                        System.out.println("Possible move found: " + j + " " + i);
+                        //System.out.println("Possible move found: " + j + " " + i);
                         _view.setCellImage(j,i);
                     }
                 }

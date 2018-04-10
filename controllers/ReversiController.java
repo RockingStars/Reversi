@@ -25,9 +25,11 @@ package com.rockingstar.modules.Reversi.controllers;
 import com.rockingstar.engine.ServerConnection;
 import com.rockingstar.engine.command.client.CommandExecutor;
 import com.rockingstar.engine.command.client.MoveCommand;
+import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.AbstractGame;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.game.State;
+import com.rockingstar.engine.game.models.Vector2D;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
 import com.rockingstar.modules.Reversi.views.ReversiView;
 
@@ -52,6 +54,9 @@ public class ReversiController extends AbstractGame {
 
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
+
+        if (player1 instanceof AI)
+            ((AI) player1).setModel(_model);
     }
 
     @Override
@@ -113,6 +118,14 @@ public class ReversiController extends AbstractGame {
 
         currentPlayer = id == 0 ? player1 : player2;
         _view.setStatus(_model.getTurnMessage(currentPlayer));
+
+        if (yourTurn && currentPlayer instanceof AI)
+            makeAIMove();
+    }
+
+    private void makeAIMove() {
+        Vector2D coordinates = ((AI) player2).getMove();
+        doPlayerMove((int) coordinates.x, (int) coordinates.y);
     }
 
     private boolean gameFinished() {
@@ -127,7 +140,6 @@ public class ReversiController extends AbstractGame {
 
         return _model.isFull();
     }
-
 
     @Override
     public void gameEnded() {
