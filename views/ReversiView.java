@@ -128,7 +128,10 @@ public class ReversiView {
                         fileName = "black.png";
                         break;
                     case 'w':
-                        fileName = "light.png";
+                        fileName = "white.png";
+                        break;
+                    case 'p':
+                        fileName = "possible.png";
                         break;
                     default:
                         fileName = null;
@@ -140,21 +143,20 @@ public class ReversiView {
             else
                 imageView.setImage(new Image(getClass().getClassLoader().getResource("com/rockingstar/modules/Reversi/empty.png").toURI().toString()));
         }
-
         catch (URISyntaxException | NullPointerException e) {
             Util.exit("Loading Reversi images");
         }
 
         Platform.runLater(() -> {
-            if (_board[x][y] == null) {
-                final int tempX = x;
-                final int tempY = y;
+            if (_board[x][y] != null && _board[x][y].getCharacter() == 'p') {
+                int tempX = x;
+                int tempY = y;
 
                 imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         if (!_isFinished && _controller.getIsYourTurn()) {
-                            imageView.setImage(null);
+                            System.out.printf("Zeg makker. Dit is het veld op coordinaten (%d, %d)\n", x, y);
                             _controller.doPlayerMove(tempX, tempY);
                             imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
                         }

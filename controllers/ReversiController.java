@@ -61,23 +61,26 @@ public class ReversiController extends AbstractGame {
 
     @Override
     public void doPlayerMove(int x, int y) {
+        _model.clearPossibleMoves();
         if (!gameFinished()) {
-            if (_model.isValidMove(x, y, currentPlayer)) {
-                if (yourTurn) {
-                    CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
+            if (yourTurn) {
+                if (_model.isValidMove(x, y, currentPlayer)) {
 
+                    CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
+                    _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
                     _model.setPlayerAtPosition(currentPlayer, x, y);
                     _view.setCellImage(x, y);
 
                     yourTurn = false;
                     setCurrentPlayer(1);
                 }
-                else
-                    _view.setErrorStatus("It's not your turn");
-
+                else {
+                    _view.setErrorStatus("Invalid move");
+                    _model.getPossibleMoves(currentPlayer);
+                }
             }
             else
-                _view.setErrorStatus("Invalid move");
+                _view.setErrorStatus("It's not your turn");
         }
         else
             gameEnded();
@@ -92,10 +95,14 @@ public class ReversiController extends AbstractGame {
             int x = position % 8;
             int y = position / 8;
 
+            _model.clearPossibleMoves();
+            _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
             _model.setPlayerAtPosition(currentPlayer, x, y);
             _view.setCellImage(x, y);
 
             setCurrentPlayer(0);
+            _model.getPossibleMoves(currentPlayer);
+
         }
     }
 
@@ -121,6 +128,8 @@ public class ReversiController extends AbstractGame {
         return _model.isFull();
     }
 
+
+    @Override
     public void gameEnded() {
         super.gameEnded();
         _view.setIsFinished(true);

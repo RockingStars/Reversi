@@ -27,28 +27,42 @@ import com.rockingstar.modules.Reversi.views.ReversiView;
 
 import javafx.application.Platform;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+
 public class ReversiModel {
 
+    private Player _ghost;
     private ReversiView _view;
 
     private Player[][] _board = new Player[8][8];
 
+    private static final int DIRECTIONS[][] = {
+            {0, 1}, {1, 1}, {1, 0}, {1, -1},
+            {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}
+    };
+
     public ReversiModel(ReversiView view) {
         _view = view;
+        _ghost = new Player("PossibleMoves", null, 'p');
     }
 
     public void setStartingPositions(Player player1, Player player2) {
         Player black = player1.getCharacter() == 'b' ? player1 : player2;
         Player white = player1.getCharacter() == 'w' ? player1 : player2;
 
-        _board[3][3] = white;
-        _board[3][4] = black;
-        _board[4][3] = black;
-        _board[4][4] = white;
+
+        setPlayerAtPosition(white,3,3);
+        setPlayerAtPosition(black,3,4);
+        setPlayerAtPosition(black,4,3);
+        setPlayerAtPosition(white,4,4);
 
         for (int y = 3; y < 5; y++)
             for (int x = 3; x < 5; x++)
-                _view.setCellImage(y, x);
+                _view.setCellImage(x, y);
+
+        getPossibleMoves(black);
     }
 
     public Player[][] getBoard() {
@@ -60,35 +74,112 @@ public class ReversiModel {
         _view.getNewGameButton().setOnAction(e -> clearBoard());
     }
 
-    public boolean isValidMove(int x, int y, Player player) {
-        if (x > 8 || y > 8 || x < 0 || y < 0 || _board[y][x] != null)
-            return false;
+    public void flipTiles(LinkedList<Integer> tilesToFlip, Player player){
+        for (Integer tile : tilesToFlip) {
+            setPlayerAtPosition(player, tile%8,tile/8);
+            _view.setCellImage(tile % 8, tile / 8);
+        }
+    }
 
-        // Test if this is a valid move by checking how many tiles would be flipped
-        // Note: inspired by: https://inventwithpython.com/chapter15.html
-        int directions[][] = {
-            {0, 1}, {1, 1}, {1, 0}, {1, -1},
-            {0, -1}, {-1, 0}, {-1, -1}, {-1, 1}
-        };
+    public LinkedList<Integer> getFlippableTiles(int baseX, int baseY, Player player) {
 
-        for (int[] direction : directions) {
-            int posX = direction[0] + 1;
-            int posY = direction[1] + 1;
+        LinkedList<Integer> tilesToFlip = new LinkedList<>();
 
-            while (posX < _board.length && posY < _board.length && _board[posY][posX] != player && _board[posY][posX] != null) {
-                posX += direction[0];
-                posY += direction[1];
-            }
 
-            if (_board[posY][posX] == player)
-                return true;
+        char currentPlayer = player.getCharacter();
+        char opponent = currentPlayer == 'b' ? 'w': 'b';
+
+        if (!moveIsOnBoard(baseX,baseY) || _board[baseX][baseY] != null) {
+            return tilesToFlip;
         }
 
+        // houd bij welke tiles geflipt moeten worden
+        int counter = 0; //for debugging
+
+        for(int[] direction : DIRECTIONS) {
+            counter++;
+
+            int x = baseX;
+            int y = baseY;
+
+            x += direction[0];
+            y += direction[1];
+
+            if (moveIsOnBoard(x, y) && _board[x][y] != null && _board[x][y].getCharacter() == opponent) {
+                //localTilesToFlip.add(y * 8 + x); // add first neighbour opponent
+                x += direction[0];
+                y += direction[1]; // one step deeper
+
+                if (!moveIsOnBoard(x, y)) {
+                    continue;
+                }
+                while (_board[x][y] != null && _board[x][y].getCharacter() == opponent) {
+                    //localTilesToFlip.add(y * 8 + x);
+                    x += direction[0];
+                    y += direction[1];
+                    if (!moveIsOnBoard(x, y)) {
+                        break;
+                    }
+                }
+                if (!moveIsOnBoard(x, y)){
+                    continue;
+                }
+
+                if(_board[x][y] != null && _board[x][y].getCharacter() == currentPlayer){
+                    while(true){
+                        x -= direction[0];
+                        y -= direction[1];
+                        if(x == baseX && y == baseY){
+                            break;
+                        }
+                        tilesToFlip.add(y * 8 + x);
+                    }
+                }
+            }
+        }
+        return tilesToFlip;
+    }
+
+
+    public boolean isValidMove(int x, int y, Player player){
+        return getFlippableTiles(x, y, player).size() > 0;
+    }
+
+
+    public boolean moveIsOnBoard(int x, int y){
+        if (x < _board.length && y < _board.length && x >= 0 && y >= 0){
+            return true;
+        }
         return false;
     }
 
-    public void switchTiles(int x1, int y1, int x2, int y2) {
-        // switch tiles here
+
+    public ArrayList<Integer> getPossibleMoves(Player player){
+        ArrayList<Integer> possibleMoves = new ArrayList<>();
+        for(int i = 0; i < _board.length; i++){
+            for(int j = 0; j < _board.length; j++){
+                if(_board[j][i] == null) {
+                    if (isValidMove(j, i, player)) {
+                        possibleMoves.add(j * 8 + i);
+                        setPlayerAtPosition(_ghost,j,i);
+                        System.out.println("Possible move found: " + j + " " + i);
+                        _view.setCellImage(j,i);
+                    }
+                }
+            }
+        }
+        return possibleMoves;
+    }
+
+    public void clearPossibleMoves() {
+        for (int i = 0; i < _board.length; i++) {
+            for (int j = 0; j < _board.length; j++) {
+                if (_board[j][i] == _ghost) {
+                    _board[j][i] = null;
+                    _view.setCellImage(j, i);
+                }
+            }
+        }
     }
 
     public void setPlayerAtPosition(Player player, int x, int y) {
