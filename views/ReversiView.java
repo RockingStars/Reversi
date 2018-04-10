@@ -41,7 +41,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.awt.*;
 import java.net.URISyntaxException;
 
 public class ReversiView {
@@ -131,6 +130,9 @@ public class ReversiView {
                     case 'w':
                         fileName = "white.png";
                         break;
+                    case 'p':
+                        fileName = "possible.png";
+                        break;
                     default:
                         fileName = null;
                 }
@@ -146,7 +148,7 @@ public class ReversiView {
         }
 
         Platform.runLater(() -> {
-            if (_board[x][y] == null) {
+            if (_board[x][y] != null && _board[x][y].getCharacter() == 'p') {
                 int tempX = x;
                 int tempY = y;
 

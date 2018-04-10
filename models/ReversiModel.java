@@ -28,10 +28,12 @@ import com.rockingstar.modules.Reversi.views.ReversiView;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 public class ReversiModel {
 
+    private Player _ghost;
     private ReversiView _view;
 
     private Player[][] _board = new Player[8][8];
@@ -43,6 +45,7 @@ public class ReversiModel {
 
     public ReversiModel(ReversiView view) {
         _view = view;
+        _ghost = new Player("PossibleMoves", null, 'p');
     }
 
     public void setStartingPositions(Player player1, Player player2) {
@@ -58,6 +61,8 @@ public class ReversiModel {
         for (int y = 3; y < 5; y++)
             for (int x = 3; x < 5; x++)
                 _view.setCellImage(x, y);
+
+        getPossibleMoves(black);
     }
 
     public Player[][] getBoard() {
@@ -69,14 +74,26 @@ public class ReversiModel {
         _view.getNewGameButton().setOnAction(e -> clearBoard());
     }
 
-    public boolean isValidMove(int baseX, int baseY, Player player, Player opponent) {
+    public void flipTiles(LinkedList<Integer> tilesToFlip, Player player){
+        for (Integer tile : tilesToFlip) {
+            setPlayerAtPosition(player, tile%8,tile/8);
+            _view.setCellImage(tile % 8, tile / 8);
+        }
+    }
+
+    public LinkedList<Integer> getFlippableTiles(int baseX, int baseY, Player player) {
+
+        LinkedList<Integer> tilesToFlip = new LinkedList<>();
+
+
+        char currentPlayer = player.getCharacter();
+        char opponent = currentPlayer == 'b' ? 'w': 'b';
+
         if (!moveIsOnBoard(baseX,baseY) || _board[baseX][baseY] != null) {
-            System.out.println("niet op board, of niet null");
-            return false;
+            return tilesToFlip;
         }
 
         // houd bij welke tiles geflipt moeten worden
-        ArrayList<Integer> tilesToFlip = new ArrayList<>();
         int counter = 0; //for debugging
 
         for(int[] direction : DIRECTIONS) {
@@ -88,7 +105,7 @@ public class ReversiModel {
             x += direction[0];
             y += direction[1];
 
-            if (moveIsOnBoard(x, y) && _board[x][y] == opponent) {
+            if (moveIsOnBoard(x, y) && _board[x][y] != null && _board[x][y].getCharacter() == opponent) {
                 //localTilesToFlip.add(y * 8 + x); // add first neighbour opponent
                 x += direction[0];
                 y += direction[1]; // one step deeper
@@ -96,7 +113,7 @@ public class ReversiModel {
                 if (!moveIsOnBoard(x, y)) {
                     continue;
                 }
-                while (_board[x][y] == opponent) {
+                while (_board[x][y] != null && _board[x][y].getCharacter() == opponent) {
                     //localTilesToFlip.add(y * 8 + x);
                     x += direction[0];
                     y += direction[1];
@@ -108,7 +125,7 @@ public class ReversiModel {
                     continue;
                 }
 
-                if(_board[x][y] == player){
+                if(_board[x][y] != null && _board[x][y].getCharacter() == currentPlayer){
                     while(true){
                         x -= direction[0];
                         y -= direction[1];
@@ -120,26 +137,49 @@ public class ReversiModel {
                 }
             }
         }
-
-        if(tilesToFlip.size() == 0){
-            return false;
-        }
-        flipTiles(tilesToFlip,player);
-        return true;
+        return tilesToFlip;
     }
 
-    public void flipTiles(ArrayList<Integer> tilesToFlip, Player player){
-        for (Integer tile : tilesToFlip) {
-            setPlayerAtPosition(player, tile%8,tile/8);
-            _view.setCellImage(tile % 8, tile / 8);
-        }
+
+    public boolean isValidMove(int x, int y, Player player){
+        return getFlippableTiles(x, y, player).size() > 0;
     }
+
 
     public boolean moveIsOnBoard(int x, int y){
-        if (x < _board.length && y < _board.length && x > 0 && y > 0){
+        if (x < _board.length && y < _board.length && x >= 0 && y >= 0){
             return true;
         }
         return false;
+    }
+
+
+    public ArrayList<Integer> getPossibleMoves(Player player){
+        ArrayList<Integer> possibleMoves = new ArrayList<>();
+        for(int i = 0; i < _board.length; i++){
+            for(int j = 0; j < _board.length; j++){
+                if(_board[j][i] == null) {
+                    if (isValidMove(j, i, player)) {
+                        possibleMoves.add(j * 8 + i);
+                        setPlayerAtPosition(_ghost,j,i);
+                        System.out.println("Possible move found: " + j + " " + i);
+                        _view.setCellImage(j,i);
+                    }
+                }
+            }
+        }
+        return possibleMoves;
+    }
+
+    public void clearPossibleMoves() {
+        for (int i = 0; i < _board.length; i++) {
+            for (int j = 0; j < _board.length; j++) {
+                if (_board[j][i] == _ghost) {
+                    _board[j][i] = null;
+                    _view.setCellImage(j, i);
+                }
+            }
+        }
     }
 
     public void setPlayerAtPosition(Player player, int x, int y) {
