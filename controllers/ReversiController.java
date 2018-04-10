@@ -62,8 +62,9 @@ public class ReversiController extends AbstractGame {
     @Override
     public void doPlayerMove(int x, int y) {
         if (!gameFinished()) {
-            if (_model.isValidMove(x, y, currentPlayer, currentPlayer == player1 ? player2 : player1)) {
-                if (yourTurn) {
+            if (yourTurn) {
+                if (_model.isValidMove(x, y, currentPlayer, currentPlayer == player1 ? player2 : player1)) {
+
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
 
                     //_model.switchTiles(x, y, currentPlayer);
@@ -74,10 +75,10 @@ public class ReversiController extends AbstractGame {
                     setCurrentPlayer(1);
                 }
                 else
-                    _view.setErrorStatus("It's not your turn");
+                    _view.setErrorStatus("Invalid move");
             }
             else
-                _view.setErrorStatus("Invalid move");
+                _view.setErrorStatus("It's not your turn");
         }
         else
             gameEnded();
@@ -93,8 +94,8 @@ public class ReversiController extends AbstractGame {
             int y = position / 8;
 
             _model.isValidMove(x,y,currentPlayer, currentPlayer == player1 ? player2 : player1);
-            //_model.switchTiles(x, y, currentPlayer);
             _model.setPlayerAtPosition(currentPlayer, x, y);
+            //_model.switchTiles(x, y, currentPlayer);
             _view.setCellImage(x, y);
 
             setCurrentPlayer(0);
