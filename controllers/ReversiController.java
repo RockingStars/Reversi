@@ -122,6 +122,16 @@ public class ReversiController extends AbstractGame {
             makeAIMove();
     }
 
+    @Override
+    public void initialSetCurrentPlayer(int id) {
+        if (currentState == State.GAME_FINISHED)
+            return;
+
+        currentPlayer = id == 0 ? player1 : player2;
+        yourTurn = currentPlayer == player1;
+        _view.setStatus(_model.getTurnMessage(currentPlayer));
+    }
+
     private void makeAIMove() {
         System.out.println(_model.getPossibleMoves(player1));
         System.out.println(_model.getPossibleMoves(player1));
