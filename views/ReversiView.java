@@ -91,6 +91,7 @@ public class ReversiView {
 
         _status = new Label();
         _status.setFont(new Font(16));
+        _status.setId("topText");
 
         _errorStatus = new Label();
         _errorStatus.setFont(new Font(16));
@@ -181,8 +182,9 @@ public class ReversiView {
             Util.exit("Loading Reversi images");
         }
 
-        if (!(_controller.getPlayerToMove() instanceof AI)) {
-            Platform.runLater(() -> {
+
+        Platform.runLater(() -> {
+            if (!(_controller.getPlayerToMove() instanceof AI)) {
                 if (_board[x][y] != null && _board[x][y].getCharacter() == 'p') {
                     int tempX = x;
                     int tempY = y;
@@ -204,8 +206,8 @@ public class ReversiView {
                     });
                 }
                 _pane.add(imageView, x, y);
-            });
-        }
+            }
+        });
     }
 
     public Button getNewGameButton() {

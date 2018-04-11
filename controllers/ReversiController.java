@@ -45,8 +45,6 @@ public class ReversiController extends AbstractGame {
     public ReversiController(Player player1, Player player2) {
         super(player1, player2);
 
-        startGame();
-
         _view = new ReversiView(this);
         _model = new ReversiModel(_view);
 
@@ -70,11 +68,10 @@ public class ReversiController extends AbstractGame {
         _model.clearPossibleMoves();
         if (!gameFinished()) {
             if (yourTurn) {
-                if (_model.isValidMove(x, y, currentPlayer)) {
-
+                if (_model.isValidMove(x, y, player1)) {
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
-                    _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-                    _model.setPlayerAtPosition(currentPlayer, x, y);
+                    _model.flipTiles(_model.getFlippableTiles(x,y,player1), player1);
+                    _model.setPlayerAtPosition(player1, x, y);
                     _view.setCellImage(x, y);
 
                     yourTurn = false;
@@ -82,7 +79,7 @@ public class ReversiController extends AbstractGame {
                 }
                 else {
                     _view.setErrorStatus("Invalid move");
-                    _model.getPossibleMoves(currentPlayer);
+                    _model.getPossibleMoves(player1);
                 }
             }
             else
@@ -95,15 +92,17 @@ public class ReversiController extends AbstractGame {
     @Override
     public void doPlayerMove(int position) {
         if (!gameFinished()) {
-            if (yourTurn)
+            if (yourTurn) {
+                System.out.println("It's still your turn, bitch.");
                 return;
+            }
 
             int x = position % 8;
             int y = position / 8;
 
             _model.clearPossibleMoves();
-            _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-            _model.setPlayerAtPosition(currentPlayer, x, y);
+            _model.flipTiles(_model.getFlippableTiles(x,y,player2), player2);
+            _model.setPlayerAtPosition(player2, x, y);
             _view.setCellImage(x, y);
         }
     }
@@ -118,13 +117,11 @@ public class ReversiController extends AbstractGame {
         _view.setStatus(_model.getTurnMessage(currentPlayer));
 
         // @todo Move this to a more appropriate location
-        if (yourTurn && player1 instanceof AI)
+        if (yourTurn && player1 instanceof AI && getGameState() == State.GAME_STARTED)
             makeAIMove();
     }
 
     private void makeAIMove() {
-        System.out.println(_model.getPossibleMoves(player1));
-        System.out.println(_model.getPossibleMoves(player1));
         VectorXY coordinates = ((AI) player1).getMove(player1);
         doPlayerMove(coordinates.x, coordinates.y);
     }
