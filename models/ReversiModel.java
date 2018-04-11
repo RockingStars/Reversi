@@ -22,10 +22,8 @@
 
 package com.rockingstar.modules.Reversi.models;
 
-import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.modules.Reversi.views.ReversiView;
-
 import javafx.application.Platform;
 
 import java.util.ArrayList;
@@ -65,18 +63,6 @@ public class ReversiModel {
 
         getPossibleMoves(black);
 
-        for (int y = 0; y < _board.length; y++) {
-            for (int x = 0; x < _board.length; x++) {
-                if (_board[y][x] instanceof AI)
-                    System.out.println("a ");
-                else if (_board[y][x] instanceof Player)
-                    System.out.println("p ");
-                else
-                    System.out.println("? ");
-            }
-
-            System.out.println();
-        }
     }
 
     public Player[][] getBoard() {
@@ -170,12 +156,12 @@ public class ReversiModel {
         ArrayList<Integer> possibleMoves = new ArrayList<>();
         for(int i = 0; i < _board.length; i++){
             for(int j = 0; j < _board.length; j++){
-                if(_board[j][i] == null) {
-                    if (isValidMove(j, i, player)) {
+                if(_board[i][j] == null) {
+                    if (isValidMove(i, j, player)) {
                         possibleMoves.add(j * 8 + i);
-                        setPlayerAtPosition(_ghost,j,i);
-                        _view.setCellImage(j,i);
-                        System.out.printf("Move from player %s\n", player.getUsername());
+                        setPlayerAtPosition(_ghost,i,j);
+                        _view.setCellImage(i,j);
+                        //System.out.printf("Move from player %s\n", player.getUsername());
                     }
                 }
             }
@@ -187,6 +173,7 @@ public class ReversiModel {
         for (int i = 0; i < _board.length; i++) {
             for (int j = 0; j < _board.length; j++) {
                 if (_board[j][i] == _ghost) {
+                    System.out.println(j * 8 + i);
                     _board[j][i] = null;
                     _view.setCellImage(j, i);
                 }
