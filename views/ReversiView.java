@@ -38,6 +38,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -47,25 +48,47 @@ public class ReversiView {
 
     private BorderPane _borderPane;
 
+    // Top
+    private HBox _gameInfo;
+    private Label _status;
+    private Label _errorStatus;
+    private Label _timer;
+
+    // Left
+    private VBox _player1Info;
+    private Label _player1Name;
+    private Label _player1Score;
+
+    // Right
+    private VBox _player2Info;
+    private Label _player2Name;
+    private Label _player2Score;
+
+    // Center
+    private GridPane _pane;
+
+    // Bottom
+    private HBox _buttons;
     private Button _endButton;
     private Button _newGameButton;
 
-    private GridPane _pane;
 
     private Player[][] _board;
-    private HBox _buttons;
-
-    private Label _status;
-    private Label _errorStatus;
-
     private ReversiController _controller;
-
     private boolean _isFinished;
-    private HBox _labels;
 
     public ReversiView(ReversiController controller) {
         _borderPane = new BorderPane();
         _controller = controller;
+
+        _isFinished = false;
+
+        setup();
+    }
+
+    private void setup() {
+
+        _gameInfo = new HBox();
 
         _status = new Label();
         _status.setFont(new Font(16));
@@ -74,13 +97,30 @@ public class ReversiView {
         _errorStatus.setFont(new Font(16));
         _errorStatus.setTextFill(Color.RED);
 
+        _timer = new Label("10 Seconden");
+        _timer.setFont(new Font(30));
 
-        _isFinished = false;
+        _gameInfo.getChildren().addAll(_status, _errorStatus, _timer);
 
-        setup();
-    }
 
-    private void setup() {
+        _player1Info = new VBox();
+        _player2Info = new VBox();
+
+        _player1Name = new Label("Player 1");
+        _player1Name.setFont(new Font(16));
+        _player1Score = new Label("15");
+        _player1Score.setFont(new Font(16));
+
+        _player2Name = new Label("Player 1");
+        _player2Name.setFont(new Font(16));
+        _player2Score = new Label("15");
+        _player2Score.setFont(new Font(16));
+
+
+        _player1Info.getChildren().addAll(_player1Name, _player1Score);
+        _player2Info.getChildren().addAll(_player2Name, _player2Score);
+
+
         _endButton = new Button("End game");
         _newGameButton = new Button("New game");
 
@@ -94,15 +134,11 @@ public class ReversiView {
         _buttons.setAlignment(Pos.CENTER);
         _buttons.getChildren().addAll(_newGameButton, _endButton);
 
-        _labels = new HBox();
-        _labels.setSpacing(60.0);
-        _labels.setMinHeight(50);
-        _labels.setAlignment(Pos.CENTER);
-        _labels.getChildren().addAll(_status, _errorStatus);
-
+        _borderPane.setTop(_gameInfo);
+        _borderPane.setLeft(_player1Info);
+        _borderPane.setRight(_player2Info);
         _borderPane.setCenter(_pane);
         _borderPane.setBottom(_buttons);
-        _borderPane.setTop(_labels);
     }
 
     public void generateBoardVisual() {
@@ -128,7 +164,10 @@ public class ReversiView {
                         fileName = "black.png";
                         break;
                     case 'w':
-                        fileName = "light.png";
+                        fileName = "white.png";
+                        break;
+                    case 'p':
+                        fileName = "possible.png";
                         break;
                     default:
                         fileName = null;
@@ -140,21 +179,20 @@ public class ReversiView {
             else
                 imageView.setImage(new Image(getClass().getClassLoader().getResource("com/rockingstar/modules/Reversi/empty.png").toURI().toString()));
         }
-
         catch (URISyntaxException | NullPointerException e) {
             Util.exit("Loading Reversi images");
         }
 
         Platform.runLater(() -> {
-            if (_board[x][y] == null) {
-                final int tempX = x;
-                final int tempY = y;
+            if (_board[x][y] != null && _board[x][y].getCharacter() == 'p') {
+                int tempX = x;
+                int tempY = y;
 
                 imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         if (!_isFinished && _controller.getIsYourTurn()) {
-                            imageView.setImage(null);
+                            System.out.printf("Zeg makker. Dit is het veld op coordinaten (%d, %d)\n", x, y);
                             _controller.doPlayerMove(tempX, tempY);
                             imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
                         }
