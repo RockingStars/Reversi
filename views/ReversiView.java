@@ -22,6 +22,7 @@
 
 package com.rockingstar.modules.Reversi.views;
 
+import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.controllers.ReversiController;
@@ -183,26 +184,31 @@ public class ReversiView {
             Util.exit("Loading Reversi images");
         }
 
-        Platform.runLater(() -> {
-            if (_board[x][y] != null && _board[x][y].getCharacter() == 'p') {
-                int tempX = x;
-                int tempY = y;
+        if (!(_controller.getPlayerToMove() instanceof AI)) {
+            Platform.runLater(() -> {
+                if (_board[x][y] != null && _board[x][y].getCharacter() == 'p') {
+                    int tempX = x;
+                    int tempY = y;
 
-                imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (!_isFinished && _controller.getIsYourTurn()) {
-                            System.out.printf("Zeg makker. Dit is het veld op coordinaten (%d, %d)\n", x, y);
-                            _controller.doPlayerMove(tempX, tempY);
-                            imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
+                    imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if (_controller.getPlayerToMove() instanceof AI)
+                                return;
+
+                            if (!_isFinished && _controller.getIsYourTurn()) {
+                                System.out.printf("Zeg makker. Dit is het veld op coordinaten (%d, %d)\n", x, y);
+                                _controller.doPlayerMove(tempX, tempY);
+                                imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
+                            }
+                            else if (!_controller.getIsYourTurn())
+                                _errorStatus.setText("It's not your turn.");
                         }
-                        else if (!_controller.getIsYourTurn())
-                            _errorStatus.setText("It's not your turn.");
-                    }
-                });
-            }
-            _pane.add(imageView, x, y);
-        });
+                    });
+                }
+                _pane.add(imageView, x, y);
+            });
+        }
     }
 
     public Button getNewGameButton() {

@@ -22,6 +22,7 @@
 
 package com.rockingstar.modules.Reversi.models;
 
+import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.modules.Reversi.views.ReversiView;
 
@@ -63,6 +64,19 @@ public class ReversiModel {
                 _view.setCellImage(x, y);
 
         getPossibleMoves(black);
+
+        for (int y = 0; y < _board.length; y++) {
+            for (int x = 0; x < _board.length; x++) {
+                if (_board[y][x] instanceof AI)
+                    System.out.println("a ");
+                else if (_board[y][x] instanceof Player)
+                    System.out.println("p ");
+                else
+                    System.out.println("? ");
+            }
+
+            System.out.println();
+        }
     }
 
     public Player[][] getBoard() {
@@ -158,7 +172,6 @@ public class ReversiModel {
                     if (isValidMove(j, i, player)) {
                         possibleMoves.add(j * 8 + i);
                         setPlayerAtPosition(_ghost,j,i);
-                        //System.out.println("Possible move found: " + j + " " + i);
                         _view.setCellImage(j,i);
                     }
                 }

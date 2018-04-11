@@ -25,11 +25,8 @@ package com.rockingstar.modules.Reversi.controllers;
 import com.rockingstar.engine.ServerConnection;
 import com.rockingstar.engine.command.client.CommandExecutor;
 import com.rockingstar.engine.command.client.MoveCommand;
-import com.rockingstar.engine.game.AI;
-import com.rockingstar.engine.game.AbstractGame;
-import com.rockingstar.engine.game.Player;
-import com.rockingstar.engine.game.State;
-import com.rockingstar.engine.game.models.Vector2D;
+import com.rockingstar.engine.game.*;
+import com.rockingstar.engine.game.models.VectorXY;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
 import com.rockingstar.modules.Reversi.views.ReversiView;
 
@@ -45,6 +42,11 @@ public class ReversiController extends AbstractGame {
 
     public ReversiController(Player player1, Player player2) {
         super(player1, player2);
+
+        startGame();
+
+        this.player1.setCharacter('b');
+        this.player2.setCharacter('w');
 
         _view = new ReversiView(this);
         _model = new ReversiModel(_view);
@@ -73,7 +75,7 @@ public class ReversiController extends AbstractGame {
 
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
                     _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-                    _model.setPlayerAtPosition(currentPlayer, x, y);
+                    _model.setPlayerAtPosition((Player) currentPlayer, x, y);
                     _view.setCellImage(x, y);
 
                     yourTurn = false;
@@ -102,12 +104,12 @@ public class ReversiController extends AbstractGame {
 
             _model.clearPossibleMoves();
             _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-            _model.setPlayerAtPosition(currentPlayer, x, y);
+            _model.setPlayerAtPosition((Player) currentPlayer, x, y);
             _view.setCellImage(x, y);
 
             setCurrentPlayer(0);
-            _model.getPossibleMoves(currentPlayer);
 
+            _model.getPossibleMoves(currentPlayer);
         }
     }
 
@@ -119,13 +121,14 @@ public class ReversiController extends AbstractGame {
         currentPlayer = id == 0 ? player1 : player2;
         _view.setStatus(_model.getTurnMessage(currentPlayer));
 
-        if (yourTurn && currentPlayer instanceof AI)
+        // @todo Move this to a more appropriate location
+        if (yourTurn && player1 instanceof AI)
             makeAIMove();
     }
 
     private void makeAIMove() {
-        Vector2D coordinates = ((AI) player2).getMove();
-        doPlayerMove((int) coordinates.x, (int) coordinates.y);
+        VectorXY coordinates = ((AI) player1).getMove();
+        doPlayerMove(coordinates.x, coordinates.y);
     }
 
     private boolean gameFinished() {
