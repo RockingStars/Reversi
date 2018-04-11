@@ -173,7 +173,7 @@ public class ReversiModel {
         for (int i = 0; i < _board.length; i++) {
             for (int j = 0; j < _board.length; j++) {
                 if (_board[j][i] == _ghost) {
-                    System.out.println(j * 8 + i);
+                    //System.out.println(j * 8 + i);
                     _board[j][i] = null;
                     _view.setCellImage(j, i);
                 }

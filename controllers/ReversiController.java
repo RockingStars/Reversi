@@ -86,7 +86,6 @@ public class ReversiController extends AbstractGame {
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
 
                     yourTurn = false;
-                    setCurrentPlayer(1);
                 }
                 else {
                     _view.setErrorStatus("Invalid move");
@@ -113,6 +112,8 @@ public class ReversiController extends AbstractGame {
             _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
             _model.setPlayerAtPosition(currentPlayer, x, y);
             _view.setCellImage(x, y);
+            yourTurn = true;
+            setCurrentPlayer(0);
         }
     }
 
@@ -142,8 +143,9 @@ public class ReversiController extends AbstractGame {
 
     private void makeAIMove() {
         VectorXY coordinates = ((AI) player1).getMove(player1);
-        doPlayerMove(coordinates.x, coordinates.y);
         System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y);
+        doPlayerMove(coordinates.x, coordinates.y);
+        System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y + " DONE");
     }
 
     private boolean gameFinished() {
