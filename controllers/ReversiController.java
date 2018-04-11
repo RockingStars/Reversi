@@ -25,11 +25,13 @@ package com.rockingstar.modules.Reversi.controllers;
 import com.rockingstar.engine.ServerConnection;
 import com.rockingstar.engine.command.client.CommandExecutor;
 import com.rockingstar.engine.command.client.MoveCommand;
-import com.rockingstar.engine.game.*;
+import com.rockingstar.engine.game.AI;
+import com.rockingstar.engine.game.AbstractGame;
+import com.rockingstar.engine.game.Player;
+import com.rockingstar.engine.game.State;
 import com.rockingstar.engine.game.models.VectorXY;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
 import com.rockingstar.modules.Reversi.views.ReversiView;
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -99,7 +101,7 @@ public class ReversiController extends AbstractGame {
             int x = position % 8;
             int y = position / 8;
 
-            //_model.clearPossibleMoves();
+            _model.clearPossibleMoves();
             _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
             _model.setPlayerAtPosition(currentPlayer, x, y);
             _view.setCellImage(x, y);
@@ -112,6 +114,7 @@ public class ReversiController extends AbstractGame {
             return;
 
         currentPlayer = id == 0 ? player1 : player2;
+        yourTurn = currentPlayer == player1;
         _view.setStatus(_model.getTurnMessage(currentPlayer));
 
         // @todo Move this to a more appropriate location
@@ -120,7 +123,9 @@ public class ReversiController extends AbstractGame {
     }
 
     private void makeAIMove() {
-        VectorXY coordinates = ((AI) player1).getMove();
+        System.out.println(_model.getPossibleMoves(player1));
+        System.out.println(_model.getPossibleMoves(player1));
+        VectorXY coordinates = ((AI) player1).getMove(player1);
         doPlayerMove(coordinates.x, coordinates.y);
     }
 

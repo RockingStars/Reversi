@@ -166,6 +166,7 @@ public class ReversiModel {
     }
 
     public ArrayList<Integer> getPossibleMoves(Player player){
+        clearPossibleMoves();
         ArrayList<Integer> possibleMoves = new ArrayList<>();
         for(int i = 0; i < _board.length; i++){
             for(int j = 0; j < _board.length; j++){
