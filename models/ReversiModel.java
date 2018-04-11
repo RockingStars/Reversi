@@ -64,6 +64,19 @@ public class ReversiModel {
                 _view.setCellImage(x, y);
 
         getPossibleMoves(black);
+
+        for (int y = 0; y < _board.length; y++) {
+            for (int x = 0; x < _board.length; x++) {
+                if (_board[y][x] instanceof AI)
+                    System.out.println("a ");
+                else if (_board[y][x] instanceof Player)
+                    System.out.println("p ");
+                else
+                    System.out.println("? ");
+            }
+
+            System.out.println();
+        }
     }
 
     public Player[][] getBoard() {

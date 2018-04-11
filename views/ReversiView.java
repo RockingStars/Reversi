@@ -182,9 +182,8 @@ public class ReversiView {
             Util.exit("Loading Reversi images");
         }
 
-
-        Platform.runLater(() -> {
-            if (!(_controller.getPlayerToMove() instanceof AI)) {
+        if (!(_controller.getPlayerToMove() instanceof AI)) {
+            Platform.runLater(() -> {
                 if (_board[x][y] != null && _board[x][y].getCharacter() == 'p') {
                     int tempX = x;
                     int tempY = y;
@@ -206,8 +205,8 @@ public class ReversiView {
                     });
                 }
                 _pane.add(imageView, x, y);
-            }
-        });
+            });
+        }
     }
 
     public Button getNewGameButton() {
