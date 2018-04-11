@@ -73,7 +73,6 @@ public class ReversiView {
     private Button _endButton;
     private Button _newGameButton;
 
-
     private Player[][] _board;
     private ReversiController _controller;
     private boolean _isFinished;
@@ -88,7 +87,6 @@ public class ReversiView {
     }
 
     private void setup() {
-
         _gameInfo = new HBox();
 
         _status = new Label();
@@ -102,7 +100,6 @@ public class ReversiView {
         _timer.setFont(new Font(30));
 
         _gameInfo.getChildren().addAll(_status, _errorStatus, _timer);
-
 
         _player1Info = new VBox();
         _player2Info = new VBox();

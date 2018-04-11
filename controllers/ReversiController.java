@@ -45,9 +45,6 @@ public class ReversiController extends AbstractGame {
 
         startGame();
 
-        this.player1.setCharacter('b');
-        this.player2.setCharacter('w');
-
         _view = new ReversiView(this);
         _model = new ReversiModel(_view);
 
@@ -75,7 +72,7 @@ public class ReversiController extends AbstractGame {
 
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
                     _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-                    _model.setPlayerAtPosition((Player) currentPlayer, x, y);
+                    _model.setPlayerAtPosition(currentPlayer, x, y);
                     _view.setCellImage(x, y);
 
                     yourTurn = false;
@@ -102,14 +99,10 @@ public class ReversiController extends AbstractGame {
             int x = position % 8;
             int y = position / 8;
 
-            _model.clearPossibleMoves();
+            //_model.clearPossibleMoves();
             _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-            _model.setPlayerAtPosition((Player) currentPlayer, x, y);
+            _model.setPlayerAtPosition(currentPlayer, x, y);
             _view.setCellImage(x, y);
-
-            setCurrentPlayer(0);
-
-            _model.getPossibleMoves(currentPlayer);
         }
     }
 
@@ -142,6 +135,11 @@ public class ReversiController extends AbstractGame {
         }
 
         return _model.isFull();
+    }
+
+    @Override
+    public void showPossibleMoves() {
+        _model.getPossibleMoves(currentPlayer);
     }
 
     @Override

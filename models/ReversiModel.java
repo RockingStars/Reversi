@@ -149,6 +149,7 @@ public class ReversiModel {
                 }
             }
         }
+
         return tilesToFlip;
     }
 
@@ -173,6 +174,7 @@ public class ReversiModel {
                         possibleMoves.add(j * 8 + i);
                         setPlayerAtPosition(_ghost,j,i);
                         _view.setCellImage(j,i);
+                        System.out.printf("Move from player %s\n", player.getUsername());
                     }
                 }
             }
