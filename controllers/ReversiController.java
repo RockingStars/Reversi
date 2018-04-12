@@ -70,16 +70,10 @@ public class ReversiController extends AbstractGame {
             if (yourTurn) {
                 if (_model.isValidMove(x, y, player1)) {
 
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
                     _model.flipTiles(_model.getFlippableTiles(x,y,player1), player1);
                     _model.setPlayerAtPosition(player1, x, y);
                     _view.setCellImage(x, y);
+                    CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
                 }
                 else {
                     _view.setErrorStatus("Invalid move");
