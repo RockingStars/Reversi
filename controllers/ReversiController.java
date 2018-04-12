@@ -164,8 +164,6 @@ public class ReversiController extends AbstractGame {
                 _view.setStatus("Unknown result");
         }
 
-        setGameState(State.GAME_FINISHED);
-
         Platform.runLater(() -> {
             Alert returnToLobby = new Alert(Alert.AlertType.CONFIRMATION);
 
