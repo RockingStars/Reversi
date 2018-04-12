@@ -24,7 +24,6 @@ package com.rockingstar.modules.Reversi.models;
 
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.modules.Reversi.views.ReversiView;
-
 import javafx.application.Platform;
 
 import java.util.ArrayList;
@@ -63,6 +62,7 @@ public class ReversiModel {
                 _view.setCellImage(x, y);
 
         getPossibleMoves(black);
+
     }
 
     public Player[][] getBoard() {
@@ -82,9 +82,7 @@ public class ReversiModel {
     }
 
     public LinkedList<Integer> getFlippableTiles(int baseX, int baseY, Player player) {
-
         LinkedList<Integer> tilesToFlip = new LinkedList<>();
-
 
         char currentPlayer = player.getCharacter();
         char opponent = currentPlayer == 'b' ? 'w': 'b';
@@ -137,6 +135,7 @@ public class ReversiModel {
                 }
             }
         }
+
         return tilesToFlip;
     }
 
@@ -145,7 +144,6 @@ public class ReversiModel {
         return getFlippableTiles(x, y, player).size() > 0;
     }
 
-
     public boolean moveIsOnBoard(int x, int y){
         if (x < _board.length && y < _board.length && x >= 0 && y >= 0){
             return true;
@@ -153,17 +151,17 @@ public class ReversiModel {
         return false;
     }
 
-
     public ArrayList<Integer> getPossibleMoves(Player player){
+        clearPossibleMoves();
         ArrayList<Integer> possibleMoves = new ArrayList<>();
         for(int i = 0; i < _board.length; i++){
             for(int j = 0; j < _board.length; j++){
-                if(_board[j][i] == null) {
-                    if (isValidMove(j, i, player)) {
+                if(_board[i][j] == null) {
+                    if (isValidMove(i, j, player)) {
                         possibleMoves.add(j * 8 + i);
-                        setPlayerAtPosition(_ghost,j,i);
-                        System.out.println("Possible move found: " + j + " " + i);
-                        _view.setCellImage(j,i);
+                        setPlayerAtPosition(_ghost,i,j);
+                        _view.setCellImage(i,j);
+                        //System.out.printf("Move from player %s\n", player.getUsername());
                     }
                 }
             }
@@ -175,6 +173,7 @@ public class ReversiModel {
         for (int i = 0; i < _board.length; i++) {
             for (int j = 0; j < _board.length; j++) {
                 if (_board[j][i] == _ghost) {
+                    //System.out.println(j * 8 + i);
                     _board[j][i] = null;
                     _view.setCellImage(j, i);
                 }
