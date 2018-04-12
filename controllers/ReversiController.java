@@ -77,11 +77,8 @@ public class ReversiController extends AbstractGame {
                     }
 
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
-
                     _model.flipTiles(_model.getFlippableTiles(x,y,player1), player1);
-
                     _model.setPlayerAtPosition(player1, x, y);
-
                     _view.setCellImage(x, y);
                 }
                 else {
@@ -92,8 +89,6 @@ public class ReversiController extends AbstractGame {
             else
                 _view.setErrorStatus("It's not your turn");
         }
-        else
-            gameEnded();
     }
 
     @Override
@@ -113,8 +108,6 @@ public class ReversiController extends AbstractGame {
             _view.setCellImage(x, y);
             yourTurn = true;
 
-        } else {
-            gameEnded();
         }
     }
 
@@ -153,12 +146,23 @@ public class ReversiController extends AbstractGame {
     }
 
     @Override
-    public void gameEnded() {
-        super.gameEnded();
+    public void gameEnded(String result) {
+        super.gameEnded(result);
         _view.setIsFinished(true);
 
-        String currentPlayerName = (yourTurn ? player1 : player2).getUsername();
-        _view.setStatus(_model.isFull() ? "It's a draw! N00bs!" : "Player " + currentPlayerName + " has won! Congratulations!");
+        switch (result) {
+            case "WIN":
+                _view.setStatus("Player " + player1.getUsername() + " has won! Congratulations!");
+                break;
+            case "LOSS":
+                _view.setStatus("You've lost!");
+                break;
+            case "DRAW":
+                _view.setStatus("It's a draw. Noobs.");
+                break;
+            default:
+                _view.setStatus("Unknown result");
+        }
 
         setGameState(State.GAME_FINISHED);
 
