@@ -25,12 +25,13 @@ package com.rockingstar.modules.Reversi.controllers;
 import com.rockingstar.engine.ServerConnection;
 import com.rockingstar.engine.command.client.CommandExecutor;
 import com.rockingstar.engine.command.client.MoveCommand;
+import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.AbstractGame;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.game.State;
+import com.rockingstar.engine.game.models.VectorXY;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
 import com.rockingstar.modules.Reversi.views.ReversiView;
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -52,6 +53,9 @@ public class ReversiController extends AbstractGame {
 
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
+
+        if (player1 instanceof AI)
+            ((AI) player1).setModel(_model);
     }
 
     @Override
@@ -64,55 +68,63 @@ public class ReversiController extends AbstractGame {
         _model.clearPossibleMoves();
         if (!gameFinished()) {
             if (yourTurn) {
-                if (_model.isValidMove(x, y, currentPlayer)) {
+                if (_model.isValidMove(x, y, player1)) {
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
-                    _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-                    _model.setPlayerAtPosition(currentPlayer, x, y);
+                    _model.flipTiles(_model.getFlippableTiles(x,y,player1), player1);
+                    _model.setPlayerAtPosition(player1, x, y);
                     _view.setCellImage(x, y);
-
-                    yourTurn = false;
-                    setCurrentPlayer(1);
                 }
                 else {
                     _view.setErrorStatus("Invalid move");
-                    _model.getPossibleMoves(currentPlayer);
+                    _model.getPossibleMoves(player1);
                 }
             }
             else
                 _view.setErrorStatus("It's not your turn");
         }
-        else
-            gameEnded();
     }
 
     @Override
     public void doPlayerMove(int position) {
         if (!gameFinished()) {
-            if (yourTurn)
+            if (yourTurn) {
+                yourTurn = false;
                 return;
+            }
 
             int x = position % 8;
             int y = position / 8;
 
             _model.clearPossibleMoves();
-            _model.flipTiles(_model.getFlippableTiles(x,y,currentPlayer), currentPlayer);
-            _model.setPlayerAtPosition(currentPlayer, x, y);
+            _model.flipTiles(_model.getFlippableTiles(x,y,player2), player2);
+            _model.setPlayerAtPosition(player2, x, y);
             _view.setCellImage(x, y);
-
-            setCurrentPlayer(0);
-            _model.getPossibleMoves(currentPlayer);
+            yourTurn = true;
 
         }
     }
 
     @Override
-    public void setCurrentPlayer(int id) {
-        if (currentState == State.GAME_FINISHED)
-            return;
+    public void doYourTurn(){
+        yourTurn = true;
+        if(player1 instanceof AI){
+            makeAIMove();
+        }
+    }
 
-        currentPlayer = id == 0 ? player1 : player2;
-        _view.setStatus(_model.getTurnMessage(currentPlayer));
+    private void makeAIMove() {
+        VectorXY coordinates = ((AI) player1).getMove(player1);
+        System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y);
+        doPlayerMove(coordinates.x, coordinates.y);
+        System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y + " DONE");
+
     }
 
     private boolean gameFinished() {
@@ -128,16 +140,29 @@ public class ReversiController extends AbstractGame {
         return _model.isFull();
     }
 
+    @Override
+    public void showPossibleMoves() {
+        _model.getPossibleMoves(player1);
+    }
 
     @Override
-    public void gameEnded() {
-        super.gameEnded();
+    public void gameEnded(String result) {
+        super.gameEnded(result);
         _view.setIsFinished(true);
 
-        String currentPlayerName = (yourTurn ? player1 : player2).getUsername();
-        _view.setStatus(_model.isFull() ? "It's a draw! N00bs!" : "Player " + currentPlayerName + " has won! Congratulations!");
-
-        setGameState(State.GAME_FINISHED);
+        switch (result) {
+            case "WIN":
+                _view.setStatus("Player " + player1.getUsername() + " has won! Congratulations!");
+                break;
+            case "LOSS":
+                _view.setStatus("You've lost!");
+                break;
+            case "DRAW":
+                _view.setStatus("It's a draw. Noobs.");
+                break;
+            default:
+                _view.setStatus("Unknown result");
+        }
 
         Platform.runLater(() -> {
             Alert returnToLobby = new Alert(Alert.AlertType.CONFIRMATION);

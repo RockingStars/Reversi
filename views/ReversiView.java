@@ -22,6 +22,7 @@
 
 package com.rockingstar.modules.Reversi.views;
 
+import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.controllers.ReversiController;
@@ -72,7 +73,6 @@ public class ReversiView {
     private Button _endButton;
     private Button _newGameButton;
 
-
     private Player[][] _board;
     private ReversiController _controller;
     private boolean _isFinished;
@@ -87,11 +87,11 @@ public class ReversiView {
     }
 
     private void setup() {
-
         _gameInfo = new HBox();
 
         _status = new Label();
         _status.setFont(new Font(16));
+        _status.setId("topText");
 
         _errorStatus = new Label();
         _errorStatus.setFont(new Font(16));
@@ -101,7 +101,6 @@ public class ReversiView {
         _timer.setFont(new Font(30));
 
         _gameInfo.getChildren().addAll(_status, _errorStatus, _timer);
-
 
         _player1Info = new VBox();
         _player2Info = new VBox();
@@ -188,18 +187,19 @@ public class ReversiView {
                 int tempX = x;
                 int tempY = y;
 
-                imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (!_isFinished && _controller.getIsYourTurn()) {
-                            System.out.printf("Zeg makker. Dit is het veld op coordinaten (%d, %d)\n", x, y);
-                            _controller.doPlayerMove(tempX, tempY);
-                            imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
+                if (!(_controller.getPlayerToMove() instanceof AI)) {
+
+                    imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if (!_isFinished && _controller.getIsYourTurn()) {
+                                _controller.doPlayerMove(tempX, tempY);
+                                imageView.removeEventFilter(MouseEvent.MOUSE_CLICKED, this);
+                            } else if (!_controller.getIsYourTurn())
+                                _errorStatus.setText("It's not your turn.");
                         }
-                        else if (!_controller.getIsYourTurn())
-                            _errorStatus.setText("It's not your turn.");
-                    }
-                });
+                    });
+                }
             }
             _pane.add(imageView, x, y);
         });
