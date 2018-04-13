@@ -25,8 +25,11 @@ package com.rockingstar.modules.Reversi.views;
 import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.io.models.Util;
+import com.rockingstar.engine.lobby.views.LobbyView;
 import com.rockingstar.modules.Reversi.controllers.ReversiController;
+import com.rockingstar.modules.Reversi.models.ReversiModel;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -65,6 +68,7 @@ public class ReversiView {
     private VBox _player2Info;
     private Label _player2Name;
     private Label _player2Score;
+    private LobbyView _username;
 
     // Center
     private GridPane _pane;
@@ -100,6 +104,8 @@ public class ReversiView {
 
 
         _status = new Label();
+        _status.setFont(new Font(45));
+        _status.setTextFill(Color.TEAL);
         _status.setId("titleText");
 
         _errorStatus = new Label();
@@ -116,11 +122,15 @@ public class ReversiView {
         _player1Info.setMinWidth(width/10);
         _player2Info = new VBox();
         _player2Info.setStyle("-fx-background-color: green");
+        _player2Info.setAlignment(Pos.BASELINE_RIGHT);
         _player2Info.setMinWidth(width/10);
 
         _player1Name = new Label("Player 1");
         _player1Name.setFont(new Font(16));
-        _player1Score = new Label("15");
+        _player1Score = new Label();
+//        _controller = new ReversiController();
+
+
         _player1Score.setFont(new Font(16));
 
         _player2Name = new Label("Player 1");
@@ -170,7 +180,6 @@ public class ReversiView {
     public void setCellImage(int x, int y) {
         String fileName;
         ImageView imageView = new ImageView();
-
         try {
             if (_board[x][y] != null) {
                 switch (_board[x][y].getCharacter()) {
@@ -242,5 +251,13 @@ public class ReversiView {
 
     public void setIsFinished(boolean isFinished) {
         _isFinished = isFinished;
+    }
+
+    public Label getP1Score(){
+        return _player1Score;
+    }
+
+    public Label getP2Score(){
+        return _player2Score;
     }
 }
