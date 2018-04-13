@@ -82,7 +82,7 @@ public class ReversiController extends AbstractGame {
                     _model.getPossibleMoves(player1);
                 }
                 _view.setStatus("It is not your turn");
-                yourTurn = false;
+                //yourTurn = false;
             }
             else
                 _view.setErrorStatus("It's not your turn");
