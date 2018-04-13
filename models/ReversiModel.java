@@ -234,18 +234,25 @@ public class ReversiModel {
         return true;
     }
 
-    public int getScoreForPlayer(Player player) {
-        int score = 0;
 
-        for (int i = 0; i < _board.length; i++)
-            for (int j = 0; j < _board[i].length; j++)
-                if (_board[i][j] != null && _board[i][j] == player)
-                    score++;
+    public int[] getScore(){
+        int[] scores = new int[2];
 
-        return score;
-    }
-
-    public String getTurnMessage(Player player) {
-        return player.getUsername() + ", it's your turn";
+        // black = 0;
+        // white = 1;
+        scores[0] = 0;
+        scores[1] = 0;
+        for (int i= 0; i <_board.length;i++){
+            for (int j = 0; j < _board[i].length; j++){
+                if (_board[i][j] != null){
+                    if (_board[i][j].getCharacter() == 'b'){
+                        scores[0]++;
+                    } else if(_board[i][j].getCharacter() == 'w'){
+                        scores[1]++;
+                    }
+                }
+            }
+        }
+        return scores;
     }
 }

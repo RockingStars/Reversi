@@ -81,6 +81,8 @@ public class ReversiController extends AbstractGame {
                     _view.setErrorStatus("Invalid move");
                     _model.getPossibleMoves(player1);
                 }
+                _view.setStatus("It is not your turn");
+                yourTurn = false;
             }
             else
                 _view.setErrorStatus("It's not your turn");
@@ -90,6 +92,8 @@ public class ReversiController extends AbstractGame {
     @Override
     public void doPlayerMove(int position) {
         if (!(getGameState() == State.GAME_FINISHED)) {
+            Platform.runLater(() -> getScores());
+
             if (yourTurn) {
                 yourTurn = false;
                 return;
@@ -165,5 +169,12 @@ public class ReversiController extends AbstractGame {
         player2.setCharacter(player1.getCharacter() == 'b' ? 'w' : 'b');
 
         _model.setStartingPositions(player1, player2);
+    }
+
+    public void getScores(){
+        int[] scores = _model.getScore();
+        _view.getP1Score().setText("" + scores[player1.getCharacter() == 'b' ? 0 : 1]);
+        _view.getP2Score().setText("" + scores[player2.getCharacter() == 'b' ? 0 : 1]);
+
     }
 }
