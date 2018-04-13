@@ -224,6 +224,7 @@ public class ReversiView {
                     });
                 }
             }
+
             _pane.add(imageView, x, y);
         });
     }
