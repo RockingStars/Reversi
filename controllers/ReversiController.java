@@ -66,7 +66,7 @@ public class ReversiController extends AbstractGame {
     @Override
     public void doPlayerMove(int x, int y) {
         _model.clearPossibleMoves();
-        if (!gameFinished()) {
+        if (!(getGameState() == State.GAME_FINISHED)) {
             if (yourTurn) {
                 if (_model.isValidMove(x, y, player1)) {
 
@@ -87,7 +87,7 @@ public class ReversiController extends AbstractGame {
 
     @Override
     public void doPlayerMove(int position) {
-        if (!gameFinished()) {
+        if (!(getGameState() == State.GAME_FINISHED)) {
             if (yourTurn) {
                 yourTurn = false;
                 return;
@@ -115,23 +115,11 @@ public class ReversiController extends AbstractGame {
 
     private void makeAIMove() {
         VectorXY coordinates = ((AI) player1).getMove(player1);
+        System.out.println(coordinates);
         System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y);
         doPlayerMove(coordinates.x, coordinates.y);
         System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y + " DONE");
 
-    }
-
-    private boolean gameFinished() {
-        if (_model.hasWon(player1) || _model.hasWon(player2)) {
-            _view.setStatus("Player " + (yourTurn ? player1 : player2).getUsername() + " has won! Congratulations.");
-
-            setGameState(State.GAME_FINISHED);
-            _view.setIsFinished(true);
-
-            return true;
-        }
-
-        return _model.isFull();
     }
 
     @Override

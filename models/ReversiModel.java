@@ -82,6 +82,7 @@ public class ReversiModel {
     }
 
     public LinkedList<Integer> getFlippableTiles(int baseX, int baseY, Player player) {
+        clearPossibleMoves();
         LinkedList<Integer> tilesToFlip = new LinkedList<>();
 
         char currentPlayer = player.getCharacter();
