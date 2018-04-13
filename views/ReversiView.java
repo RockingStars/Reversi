@@ -43,6 +43,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.awt.*;
 import java.net.URISyntaxException;
 
 public class ReversiView {
@@ -77,6 +78,10 @@ public class ReversiView {
     private ReversiController _controller;
     private boolean _isFinished;
 
+    GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    double width = graphicsDevice.getDisplayMode().getWidth();
+    double height = graphicsDevice.getDisplayMode().getHeight();
+
     public ReversiView(ReversiController controller) {
         _borderPane = new BorderPane();
         _controller = controller;
@@ -88,22 +93,30 @@ public class ReversiView {
 
     private void setup() {
         _gameInfo = new HBox();
+        _gameInfo.setMinHeight(height/10);
+        _gameInfo.setMinWidth(width);
+        _gameInfo.setAlignment(Pos.CENTER);
+        _gameInfo.setId("gameInfo");
+
 
         _status = new Label();
-        _status.setFont(new Font(16));
-        _status.setId("topText");
+        _status.setId("titleText");
 
         _errorStatus = new Label();
-        _errorStatus.setFont(new Font(16));
-        _errorStatus.setTextFill(Color.RED);
+        _errorStatus.setId("errorStatus");
 
         _timer = new Label("10 Seconden");
+        _timer.setId("timer");
         _timer.setFont(new Font(30));
 
         _gameInfo.getChildren().addAll(_status, _errorStatus, _timer);
 
         _player1Info = new VBox();
+        _player1Info.setStyle("-fx-background-color: red");
+        _player1Info.setMinWidth(width/10);
         _player2Info = new VBox();
+        _player2Info.setStyle("-fx-background-color: green");
+        _player2Info.setMinWidth(width/10);
 
         _player1Name = new Label("Player 1");
         _player1Name.setFont(new Font(16));
@@ -128,6 +141,8 @@ public class ReversiView {
         _pane.setPadding(new Insets(20));
 
         _buttons = new HBox();
+        _buttons.setStyle("-fx-background-color: purple");
+
         _buttons.setSpacing(60.0);
         _buttons.setMinHeight(50);
         _buttons.setAlignment(Pos.CENTER);
