@@ -152,7 +152,7 @@ public class ReversiModel {
         return false;
     }
 
-    public ArrayList<Integer> getPossibleMoves(Player player){
+    public ArrayList<Integer> getPossibleMoves(Player player) {
         clearPossibleMoves();
         ArrayList<Integer> possibleMoves = new ArrayList<>();
         for(int i = 0; i < _board.length; i++){
@@ -167,6 +167,26 @@ public class ReversiModel {
                 }
             }
         }
+        return possibleMoves;
+    }
+
+    /**
+     * Minimax-related code
+     */
+    public ArrayList<Integer> getPossibleMoves(Player player, Player[][] board){
+        clearPossibleMoves();
+        ArrayList<Integer> possibleMoves = new ArrayList<>();
+
+        for(int i = 0; i < board.length; i++){
+            for(int j = 0; j < board.length; j++){
+                if(board[i][j] == null) {
+                    if (isValidMove(i, j, player)) {
+                        possibleMoves.add(j * 8 + i);
+                    }
+                }
+            }
+        }
+
         return possibleMoves;
     }
 

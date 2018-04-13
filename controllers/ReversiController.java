@@ -37,6 +37,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.util.ArrayList;
+
 public class ReversiController extends AbstractGame {
 
     private ReversiModel _model;
@@ -101,25 +103,24 @@ public class ReversiController extends AbstractGame {
             _model.setPlayerAtPosition(player2, x, y);
             _view.setCellImage(x, y);
             yourTurn = true;
-
         }
     }
 
     @Override
-    public void doYourTurn(){
+    public void doYourTurn() {
         yourTurn = true;
-        if(player1 instanceof AI){
-            makeAIMove();
+
+        ArrayList<Integer> possibleMoves = _model.getPossibleMoves(player1);
+
+        if (possibleMoves.size() == 0) {
+            //setGameState(State.GAME_FINISHED);
+            return;
         }
-    }
 
-    private void makeAIMove() {
-        VectorXY coordinates = ((AI) player1).getMove(player1);
-        System.out.println(coordinates);
-        System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y);
-        doPlayerMove(coordinates.x, coordinates.y);
-        System.out.println("AI MOVE: " + coordinates.x + " , " +  coordinates.y + " DONE");
-
+        if (player1 instanceof AI) {
+            VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
+            doPlayerMove(coordinates.x, coordinates.y);
+        }
     }
 
     @Override
