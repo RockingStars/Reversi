@@ -61,8 +61,6 @@ public class ReversiModel {
             for (int x = 3; x < 5; x++)
                 _view.setCellImage(x, y);
 
-        getPossibleMoves(black);
-
     }
 
     public Player[][] getBoard() {
@@ -82,7 +80,7 @@ public class ReversiModel {
     }
 
     public LinkedList<Integer> getFlippableTiles(int baseX, int baseY, Player player) {
-        clearPossibleMoves();
+        //clearPossibleMoves();
         LinkedList<Integer> tilesToFlip = new LinkedList<>();
 
         char currentPlayer = player.getCharacter();
@@ -167,12 +165,13 @@ public class ReversiModel {
                 }
             }
         }
+
         return possibleMoves;
     }
 
     /**
      * Minimax-related code
-     */
+     *
     public ArrayList<Integer> getPossibleMoves(Player player, Player[][] board){
         clearPossibleMoves();
         ArrayList<Integer> possibleMoves = new ArrayList<>();
@@ -188,15 +187,15 @@ public class ReversiModel {
         }
 
         return possibleMoves;
-    }
+    }*/
 
     public void clearPossibleMoves() {
         for (int i = 0; i < _board.length; i++) {
             for (int j = 0; j < _board.length; j++) {
-                if (_board[j][i] == _ghost) {
+                if (_board[i][j] == _ghost) {
                     //System.out.println(j * 8 + i);
-                    _board[j][i] = null;
-                    _view.setCellImage(j, i);
+                    _board[i][j] = null;
+                    _view.setCellImage(i, j);
                 }
             }
         }
@@ -220,20 +219,6 @@ public class ReversiModel {
             for (int j = 0; j < _board[i].length; j++)
                 _board[i][j] = null;
     }
-
-    public boolean hasWon(Player player) {
-        return false;
-    }
-
-    public boolean isFull() {
-        for (int i = 0; i < _board.length; i++)
-            for (int j = 0; j < _board[i].length; j++)
-                if (_board[i][j] == null)
-                    return false;
-
-        return true;
-    }
-
 
     public int[] getScore(){
         int[] scores = new int[2];

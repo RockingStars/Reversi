@@ -212,7 +212,6 @@ public class ReversiView {
                 int tempY = y;
 
                 if (!(_controller.getPlayerToMove() instanceof AI)) {
-
                     imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent event) {
@@ -225,6 +224,7 @@ public class ReversiView {
                     });
                 }
             }
+
             _pane.add(imageView, x, y);
         });
     }

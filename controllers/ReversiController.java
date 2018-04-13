@@ -30,6 +30,7 @@ import com.rockingstar.engine.game.AbstractGame;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.game.State;
 import com.rockingstar.engine.game.models.VectorXY;
+import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
 import com.rockingstar.modules.Reversi.views.ReversiView;
 import javafx.application.Platform;
@@ -82,7 +83,7 @@ public class ReversiController extends AbstractGame {
                     _model.getPossibleMoves(player1);
                 }
                 _view.setStatus("It is not your turn");
-                yourTurn = false;
+                //yourTurn = false;
             }
             else
                 _view.setErrorStatus("It's not your turn");
@@ -118,10 +119,12 @@ public class ReversiController extends AbstractGame {
 
         if (possibleMoves.size() == 0) {
             //setGameState(State.GAME_FINISHED);
+            Util.displayStatus("No possible moves.");
             return;
         }
 
         if (player1 instanceof AI) {
+            _model.clearPossibleMoves();
             VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
             doPlayerMove(coordinates.x, coordinates.y);
         }
