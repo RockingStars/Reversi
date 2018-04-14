@@ -80,7 +80,7 @@ public class ReversiController extends AbstractGame {
                     _model.getPossibleMoves(player1);
                 }
                 _view.setStatus("It is not your turn");
-                yourTurn = false;
+//                yourTurn = false;
             }
             else
                 _view.setErrorStatus("It's not your turn");
@@ -111,8 +111,8 @@ public class ReversiController extends AbstractGame {
 
     @Override
     public void doYourTurn(){
-        yourTurn = true;
         _view.setStatus("It is your turn");
+        yourTurn = true;
         if(player1 instanceof AI){
             makeAIMove();
         }
@@ -162,11 +162,18 @@ public class ReversiController extends AbstractGame {
             if (returnToLobby.getResult() == ButtonType.OK)
                 toLobby();
         });
+
     }
 
     public void setStartingPlayer(Player player) {
         player1.setCharacter(player.getUsername().equals(player1.getUsername()) ? 'b' : 'w');
         player2.setCharacter(player1.getCharacter() == 'b' ? 'w' : 'b');
+
+        if (player1.getCharacter() == 'w') {
+            System.out.println("Player 1 is white");
+        } else if(player1.getCharacter() == 'b'){
+            System.out.println("Player 1 is black");
+        }
 
         _model.setStartingPositions(player1, player2);
     }
@@ -175,17 +182,22 @@ public class ReversiController extends AbstractGame {
         int[] scores = _model.getScore();
         _view.getP1Score().setText("" + scores[player1.getCharacter() == 'b' ? 0 : 1]);
         _view.getP2Score().setText("" + scores[player2.getCharacter() == 'b' ? 0 : 1]);
-
-//        System.out.println("Tyfusjonk" + _model.scoreP1());
-//        int score = _model.scoreP1();
-//        return score;
     }
 
-    public void getP2Score(){
-//        _view.getScore().setText(_model.scoreP2());
+    public String player1Name(){
+        return player1.getUsername();
     }
-//    public int getP2Score(){
-//        System.out.println("Krijg de tyfus: " + _model.scoreP2());
-//        return _model.scoreP2();
-//    }
+
+    public String player2Name(){
+        return player2.getUsername();
+    }
+
+    public char getColorP1(){
+        if (player1.getCharacter() == 'w'){
+            return 'w';
+        } else {
+            return 'b';
+        }
+
+    }
 }
