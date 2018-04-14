@@ -131,14 +131,19 @@ public class ReversiView {
         Timer timer = new Timer();
         counter = 10;
         TimerTask task = new TimerTask() {
+
             @Override
             public void run() {
                 while (_controller.getIsYourTurn() == true){
-                    countLabel.setText("" + counter);
+                    Platform.runLater(()  -> {
+                        countLabel.setText("" + counter);
+                    });
+
                     System.out.println("Deze : " + counter);
                     counter = counter - 1;
                     if (counter < 1) {
                         //Einde beurt
+                        //counter = 10;
                     }
                 }
                 counter = 10;
