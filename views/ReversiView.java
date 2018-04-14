@@ -181,10 +181,15 @@ public class ReversiView {
         _colorImage1 = new Button();
         _colorImage1.setMinHeight(100);
         _colorImage1.setMinWidth(100);
+        System.out.println("Player 1 = " + _controller.getColorP1());
+        char Testing = _controller.getColorP1();
+        System.out.println("Testing = "+Testing);
         if (_controller.getColorP1() == 'w'){
             _colorImage1.setId("white");
-        } else {
+            System.out.println("White: "+ Testing);
+        } else if (_controller.getColorP1() == 'b'){
             _colorImage1.setId("black");
+            System.out.println("Black: " + Testing);
         }
 
         //Player2
@@ -210,7 +215,7 @@ public class ReversiView {
         _colorImage2.setMinWidth(100);
         if (_controller.getColorP1() == 'w'){
             _colorImage2.setId("black");
-        } else {
+        } else if (_controller.getColorP1() == 'b'){
             _colorImage2.setId("white");
         }
 

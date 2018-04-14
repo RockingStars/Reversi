@@ -252,9 +252,6 @@ public class ReversiModel {
 
     public int[] getScore(){
         int[] scores = new int[2];
-
-        // black = 0;
-        // white = 1;
         scores[0] = 0;
         scores[1] = 0;
         for (int i= 0; i <_board.length;i++){
