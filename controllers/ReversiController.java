@@ -125,7 +125,7 @@ public class ReversiController extends AbstractGame {
         }
 
         if (player1 instanceof AI) {
-            _model.clearPossibleMoves();
+            //_model.clearPossibleMoves();
             VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
             doPlayerMove(coordinates.x, coordinates.y);
         }
