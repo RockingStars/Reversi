@@ -83,6 +83,7 @@ public class ReversiController extends AbstractGame {
                     _model.getPossibleMoves(player1);
                 }
                 _view.setStatus("It is not your turn");
+
                 //yourTurn = false;
             }
             else
@@ -165,11 +166,18 @@ public class ReversiController extends AbstractGame {
             if (returnToLobby.getResult() == ButtonType.OK)
                 toLobby();
         });
+
     }
 
     public void setStartingPlayer(Player player) {
         player1.setCharacter(player.getUsername().equals(player1.getUsername()) ? 'b' : 'w');
         player2.setCharacter(player1.getCharacter() == 'b' ? 'w' : 'b');
+
+        if (player1.getCharacter() == 'w') {
+            System.out.println("Player 1 is white");
+        } else if(player1.getCharacter() == 'b'){
+            System.out.println("Player 1 is black");
+        }
 
         _model.setStartingPositions(player1, player2);
     }
@@ -178,6 +186,22 @@ public class ReversiController extends AbstractGame {
         int[] scores = _model.getScore();
         _view.getP1Score().setText("" + scores[player1.getCharacter() == 'b' ? 0 : 1]);
         _view.getP2Score().setText("" + scores[player2.getCharacter() == 'b' ? 0 : 1]);
+    }
+
+    public String player1Name(){
+        return player1.getUsername();
+    }
+
+    public String player2Name(){
+        return player2.getUsername();
+    }
+
+    public char getColorP1(){
+        if (player1.getCharacter() == 'w'){
+            return 'w';
+        } else {
+            return 'b';
+        }
 
     }
 }
