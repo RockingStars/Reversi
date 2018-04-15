@@ -84,7 +84,10 @@ public class ReversiModel {
 
         });
         _view.getNewGameButton().setOnAction(e -> clearBoard());
-        _view.getRageQuitButton().setOnAction(e -> Platform.exit());
+        _view.getRageQuitButton().setOnAction(e -> {
+                Platform.exit();
+                System.exit(0);
+        });
     }
 
     public void flipTiles(LinkedList<Integer> tilesToFlip, Player player){
