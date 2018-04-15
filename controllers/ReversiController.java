@@ -82,9 +82,6 @@ public class ReversiController extends AbstractGame {
                     _view.setErrorStatus("Invalid move");
                     _model.getPossibleMoves(player1);
                 }
-                _view.setStatus("It is not your turn");
-
-                //yourTurn = false;
             }
             else
                 _view.setErrorStatus("It's not your turn");
@@ -119,7 +116,10 @@ public class ReversiController extends AbstractGame {
         ArrayList<Integer> possibleMoves = _model.getPossibleMoves(player1);
 
         if (possibleMoves.size() == 0) {
-            //setGameState(State.GAME_FINISHED);
+            if(getGameState() != State.GAME_FINISHED){
+                CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance()));
+            }
+
             Util.displayStatus("No possible moves.");
             return;
         }
