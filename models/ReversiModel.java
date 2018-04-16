@@ -170,11 +170,6 @@ public class ReversiModel {
         return getFlippableTiles(x, y, player).size() > 0;
     }
 
-    public boolean isValidMove(int x, int y, Player player){
-        //System.out.println("meer dan 0 flippable tiles? " + (getFlippableTiles(x, y, player).size() > 0));
-        return getFlippableTiles(x, y, player).size() > 0;
-    }
-
     // minimax
     public boolean isValidMove(int x, int y, Player player, Player[][] board){
         //System.out.println("meer dan 0 flippable tiles? " + (getFlippableTiles(x, y, player, board).size() > 0));

@@ -144,6 +144,7 @@ public class ReversiController extends AbstractGame {
             Util.displayStatus("No possible moves.");
             return;
         }
+
         _view.setStatus("It is your turn");
 
         if (player1 instanceof AI) {
