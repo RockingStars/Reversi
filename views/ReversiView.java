@@ -111,7 +111,6 @@ public class ReversiView {
         _gameInfo.setAlignment(Pos.CENTER);
         _gameInfo.setId("gameInfo");
 
-
         _status = new Label();
         _status.setFont(new Font(45));
         _status.setTextFill(Color.TEAL);
@@ -143,12 +142,12 @@ public class ReversiView {
                 }
                 counter = 10;
 
-                if (_isFinished == true){
+                if (_isFinished){
                     timer.cancel();
                 }
             }
         };
-        while (_controller.getIsYourTurn() == true)
+        while (_controller.getIsYourTurn())
             timer.scheduleAtFixedRate(task,1000,1000);
 
 
@@ -183,16 +182,6 @@ public class ReversiView {
         _colorImage1 = new Button();
         _colorImage1.setMinHeight(100);
         _colorImage1.setMinWidth(100);
-        System.out.println("Player 1 = " + _controller.getColorP1());
-        char Testing = _controller.getColorP1();
-        System.out.println("Testing = "+Testing);
-        if (_controller.getColorP1() == 'w'){
-            _colorImage1.setId("white");
-            System.out.println("White: "+ Testing);
-        } else if (_controller.getColorP1() == 'b'){
-            _colorImage1.setId("black");
-            System.out.println("Black: " + Testing);
-        }
 
         //Player2
         _player2Info = new VBox(30);
@@ -215,11 +204,6 @@ public class ReversiView {
         _colorImage2 = new Button();
         _colorImage2.setMinHeight(100);
         _colorImage2.setMinWidth(100);
-        if (_controller.getColorP1() == 'w'){
-            _colorImage2.setId("black");
-        } else if (_controller.getColorP1() == 'b'){
-            _colorImage2.setId("white");
-        }
 
         //Set
         _player1Info.getChildren().addAll(_name1, _player1Name, _score1, _player1Score, _player1Color, _colorImage1);
@@ -231,9 +215,6 @@ public class ReversiView {
         _rageQuit.setId("rageQuit");
         _rageQuit.setMinWidth(172);
         _rageQuit.setMinHeight(100);
-
-
-
 
         _hanze = new Button("");
         _hanze.setId("Hanze");
@@ -323,13 +304,17 @@ public class ReversiView {
         });
     }
 
+    public void updatePlayerColors() {
+        _colorImage1.setId(_controller.getColorP1() == 'b' ? "black" : "white");
+        _colorImage2.setId(_controller.getColorP1() == 'b' ? "white" : "black");
+    }
+
     public Button getRageQuitButton(){
         return _rageQuit;
     }
     public Node getNode() {
         return _borderPane;
     }
-
 
     public void setBoard(Player[][] board) {
         _board = board;
