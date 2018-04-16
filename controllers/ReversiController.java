@@ -27,6 +27,7 @@ import com.rockingstar.engine.command.client.CommandExecutor;
 import com.rockingstar.engine.command.client.MoveCommand;
 import com.rockingstar.engine.game.*;
 import com.rockingstar.engine.game.models.VectorXY;
+import com.rockingstar.engine.gui.controllers.AudioPlayer;
 import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
 import com.rockingstar.modules.Reversi.views.ReversiView;
@@ -41,6 +42,7 @@ public class ReversiController extends AbstractGame {
 
     private ReversiModel _model;
     private ReversiView _view;
+    private AudioPlayer _backgroundMusic;
 
     public ReversiController(Player player1, Player player2) {
         super(player1, player2);
@@ -54,6 +56,9 @@ public class ReversiController extends AbstractGame {
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
 
+        setupBackgroundMusic();
+        _backgroundMusic.start();
+
         if (player1 instanceof OverPoweredAI) {
             ((OverPoweredAI) player1).setCounter(0);
             ((OverPoweredAI) player1).setModel(_model);
@@ -66,6 +71,7 @@ public class ReversiController extends AbstractGame {
     @Override
     public Node getView() {
         return _view.getNode();
+
     }
 
     @Override
@@ -79,6 +85,7 @@ public class ReversiController extends AbstractGame {
                     _model.setPlayerAtPosition(player1, x, y);
                     _view.setCellImage(x, y);
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
+                    _view.setStatus("It is not your turn");
                 }
                 else {
                     System.out.println("Not a valid move");
@@ -86,8 +93,9 @@ public class ReversiController extends AbstractGame {
                     _model.getPossibleMoves(player1);
                 }
             }
-            else
+            else {
                 _view.setErrorStatus("It's not your turn");
+            }
         }
     }
 
@@ -96,25 +104,29 @@ public class ReversiController extends AbstractGame {
         Platform.runLater(() -> getScores());
         if (!(getGameState() == State.GAME_FINISHED)) {
             if (yourTurn) {
+                Platform.runLater(() -> getScores());//Waar moet deze??
                 yourTurn = false;
+                _view.stopTimer();
+                _view.newTimerThread();
                 return;
+            } else {
+                _view.stopTimer();
+
+                int x = position % 8;
+                int y = position / 8;
+
+                _model.clearPossibleMoves();
+                _model.flipTiles(_model.getFlippableTiles(x, y, player2), player2);
+                _model.setPlayerAtPosition(player2, x, y);
+                _view.setCellImage(x, y);
+                
+                _view.newTimerThread();
             }
-
-            int x = position % 8;
-            int y = position / 8;
-
-            _model.clearPossibleMoves();
-            _model.flipTiles(_model.getFlippableTiles(x,y,player2), player2);
-            _model.setPlayerAtPosition(player2, x, y);
-            _view.setCellImage(x, y);
-            //yourTurn = true;
-        }
     }
 
     @Override
     public void doYourTurn() {
         yourTurn = true;
-
         ArrayList<Integer> possibleMoves = _model.getPossibleMoves(player1);
 
         if (possibleMoves.size() == 0) {
@@ -124,6 +136,8 @@ public class ReversiController extends AbstractGame {
                 return;
             }
         }
+
+        _view.setStatus("It is your turn");
 
         if (player1 instanceof AI) {
             _model.clearPossibleMoves();
@@ -190,6 +204,10 @@ public class ReversiController extends AbstractGame {
         _view.getP2Score().setText("" + scores[player2.getCharacter() == 'b' ? 0 : 1]);
     }
 
+    private void setupBackgroundMusic() {
+        _backgroundMusic = new AudioPlayer("ReversiMusic.mp3", true);
+    }
+  
     public String getPlayer1Name(){
         return player1.getUsername();
     }
