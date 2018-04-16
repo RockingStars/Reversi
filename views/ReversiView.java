@@ -211,6 +211,7 @@ public class ReversiView {
 
         _endButton = new Button("Forfeit");
         _endButton.setId("forfeit");
+
         _rageQuit = new Button("");
         _rageQuit.setId("rageQuit");
         _rageQuit.setMinWidth(172);

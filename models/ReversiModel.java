@@ -23,15 +23,10 @@
 package com.rockingstar.modules.Reversi.models;
 
 import com.rockingstar.engine.game.Player;
-import com.rockingstar.engine.lobby.controllers.Launcher;
 import com.rockingstar.modules.Reversi.views.ReversiView;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Optional;
 
 
 public class ReversiModel {
@@ -69,22 +64,6 @@ public class ReversiModel {
 
     public Player[][] getBoard() {
         return _board;
-    }
-
-    public void addEventHandlers() {
-        _view.getEndButton().setOnAction(e ->{
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Closing game");
-            alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to end the game?");
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK)
-                Launcher.getInstance().returnToLobby();
-
-        });
-
-        _view.getRageQuitButton().setOnAction(e -> Platform.exit());
     }
 
     public void flipTiles(LinkedList<Integer> tilesToFlip, Player player){

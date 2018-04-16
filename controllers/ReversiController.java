@@ -24,6 +24,7 @@ package com.rockingstar.modules.Reversi.controllers;
 
 import com.rockingstar.engine.ServerConnection;
 import com.rockingstar.engine.command.client.CommandExecutor;
+import com.rockingstar.engine.command.client.ForfeitCommand;
 import com.rockingstar.engine.command.client.MoveCommand;
 import com.rockingstar.engine.game.*;
 import com.rockingstar.engine.game.models.VectorXY;
@@ -36,6 +37,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ReversiController extends AbstractGame {
 
@@ -48,11 +50,12 @@ public class ReversiController extends AbstractGame {
         _view = new ReversiView(this);
         _model = new ReversiModel(_view);
 
-        _model.addEventHandlers();
         _model.createCells();
 
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
+
+        addEventHandlers();
 
         if (player1 instanceof OverPoweredAI) {
             ((OverPoweredAI) player1).setCounter(0);
@@ -182,6 +185,22 @@ public class ReversiController extends AbstractGame {
 
         _model.setStartingPositions(player1, player2);
         _view.updatePlayerColors();
+    }
+
+    public void addEventHandlers() {
+        _view.getEndButton().setOnAction(e ->{
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Closing game");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to give up?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                CommandExecutor.execute(new ForfeitCommand(ServerConnection.getInstance()));
+            }
+        });
+
+        _view.getRageQuitButton().setOnAction(e -> Platform.exit());
     }
 
     public void getScores(){
