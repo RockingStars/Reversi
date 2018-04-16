@@ -90,8 +90,8 @@ public class ReversiController extends AbstractGame {
 
     @Override
     public void doPlayerMove(int position) {
+        Platform.runLater(() -> getScores());
         if (!(getGameState() == State.GAME_FINISHED)) {
-            Platform.runLater(() -> getScores());
 
             if (yourTurn) {
                 yourTurn = false;
@@ -125,19 +125,15 @@ public class ReversiController extends AbstractGame {
         }
 
         if (player1 instanceof AI) {
-            //_model.clearPossibleMoves();
+            _model.clearPossibleMoves();
             VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
             doPlayerMove(coordinates.x, coordinates.y);
         }
     }
 
     @Override
-    public void showPossibleMoves() {
-        _model.getPossibleMoves(player1);
-    }
-
-    @Override
     public void gameEnded(String result) {
+        Platform.runLater(() -> getScores());
         super.gameEnded(result);
         _view.setIsFinished(true);
 

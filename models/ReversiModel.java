@@ -83,6 +83,7 @@ public class ReversiModel {
                 Launcher.getInstance().returnToLobby();
 
         });
+
         _view.getRageQuitButton().setOnAction(e -> Platform.exit());
     }
 

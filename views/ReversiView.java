@@ -25,16 +25,13 @@ package com.rockingstar.modules.Reversi.views;
 import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.Player;
 import com.rockingstar.engine.io.models.Util;
-import com.rockingstar.engine.lobby.views.LobbyView;
 import com.rockingstar.modules.Reversi.controllers.ReversiController;
-import com.rockingstar.modules.Reversi.models.ReversiModel;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,12 +43,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import java.awt.*;
 import java.net.URISyntaxException;
-import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ReversiView {
 
@@ -165,6 +160,7 @@ public class ReversiView {
 
         //Player 1
         _player1Info = new VBox(30);
+        _player1Info.setPadding(new Insets(50));
         _player1Info.setMinWidth(width/10);
         _player1Info.setAlignment(Pos.CENTER);
         _player1Info.setId("p1info");
@@ -235,6 +231,10 @@ public class ReversiView {
         _rageQuit.setId("rageQuit");
         _rageQuit.setMinWidth(172);
         _rageQuit.setMinHeight(100);
+
+
+
+
         _hanze = new Button("");
         _hanze.setId("Hanze");
         _hanze.setMinWidth(100);
@@ -291,10 +291,10 @@ public class ReversiView {
                 }
 
                 if (fileName != null)
-                    imageView.setImage(new Image(getClass().getClassLoader().getResource("com/rockingstar/modules/Reversi/" + fileName).toURI().toString()));
+                    imageView.setImage(new Image(getClass().getClassLoader().getResource("resources/styles/" + fileName).toURI().toString()));
             }
             else
-                imageView.setImage(new Image(getClass().getClassLoader().getResource("com/rockingstar/modules/Reversi/empty1.png").toURI().toString()));
+                imageView.setImage(new Image(getClass().getClassLoader().getResource("styles/empty1.png").toURI().toString()));
         }
         catch (URISyntaxException | NullPointerException e) {
             Util.exit("Loading Reversi images");
@@ -354,5 +354,4 @@ public class ReversiView {
     public Label getP2Score(){
         return _player2Score;
     }
-
 }
