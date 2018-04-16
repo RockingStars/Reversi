@@ -125,7 +125,7 @@ public class ReversiController extends AbstractGame {
         }
 
         if (player1 instanceof AI) {
-            //_model.clearPossibleMoves();
+            _model.clearPossibleMoves();
             VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
             doPlayerMove(coordinates.x, coordinates.y);
         }
@@ -174,9 +174,9 @@ public class ReversiController extends AbstractGame {
         player2.setCharacter(player1.getCharacter() == 'b' ? 'w' : 'b');
 
         if (player1.getCharacter() == 'w') {
-            System.out.println("Player 1 is white");
+            Util.displayStatus("Player 1 is white");
         } else if(player1.getCharacter() == 'b'){
-            System.out.println("Player 1 is black");
+            Util.displayStatus("Player 1 is black");
         }
 
         _model.setStartingPositions(player1, player2);
