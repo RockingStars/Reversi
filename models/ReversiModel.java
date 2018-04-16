@@ -23,7 +23,6 @@
 package com.rockingstar.modules.Reversi.models;
 
 import com.rockingstar.engine.game.Player;
-import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.engine.lobby.controllers.Launcher;
 import com.rockingstar.modules.Reversi.views.ReversiView;
 import javafx.application.Platform;
@@ -163,7 +162,7 @@ public class ReversiModel {
             }
         }
         //System.out.println("Current player:" + currentPlayer);
-        Util.displayStatus("TILES TO FLIP : " + tilesToFlip);
+        //Util.displayStatus("TILES TO FLIP : " + tilesToFlip);
         return tilesToFlip;
     }
 

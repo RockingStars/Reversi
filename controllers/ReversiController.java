@@ -54,8 +54,11 @@ public class ReversiController extends AbstractGame {
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
 
-        if (player1 instanceof OverPoweredAI)
+        if (player1 instanceof OverPoweredAI) {
+            ((OverPoweredAI) player1).setCounter(0);
             ((OverPoweredAI) player1).setModel(_model);
+            ((OverPoweredAI) player1).setController(this);
+        }
         else if (player1 instanceof Lech)
             ((Lech) player1).setModel(_model);
         else if (player1 instanceof MinimaxAI) {
@@ -76,13 +79,9 @@ public class ReversiController extends AbstractGame {
             if (yourTurn) {
                 Util.displayStatus("Amount of flippable tiles: " + _model.getFlippableTiles(x,y,player1));
                 if (_model.isValidMove(x, y, player1)) {
-                    System.out.println("Valid move");
                     _model.flipTiles(_model.getFlippableTiles(x,y,player1), player1);
-                    System.out.println("komt hier 1");
                     _model.setPlayerAtPosition(player1, x, y);
-                    System.out.println("komt hier 2");
                     _view.setCellImage(x, y);
-                    System.out.println("komt hier 3");
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
                 }
                 else {
