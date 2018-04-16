@@ -76,14 +76,16 @@ public class ReversiController extends AbstractGame {
                     _model.setPlayerAtPosition(player1, x, y);
                     _view.setCellImage(x, y);
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
+                    _view.setStatus("It is not your turn");
                 }
                 else {
                     _view.setErrorStatus("Invalid move");
                     _model.getPossibleMoves(player1);
                 }
             }
-            else
+            else {
                 _view.setErrorStatus("It's not your turn");
+            }
         }
     }
 
@@ -91,27 +93,32 @@ public class ReversiController extends AbstractGame {
     public void doPlayerMove(int position) {
         Platform.runLater(() -> getScores());
         if (!(getGameState() == State.GAME_FINISHED)) {
-
             if (yourTurn) {
                 yourTurn = false;
+                _view.stopTimer();
+                _view.newTimerThread();
                 return;
+            } else {
+                _view.stopTimer();
+
+                int x = position % 8;
+                int y = position / 8;
+
+                _model.clearPossibleMoves();
+                _model.flipTiles(_model.getFlippableTiles(x, y, player2), player2);
+                _model.setPlayerAtPosition(player2, x, y);
+                _view.setCellImage(x, y);
+                yourTurn = true;
+                _view.newTimerThread();
             }
 
-            int x = position % 8;
-            int y = position / 8;
-
-            _model.clearPossibleMoves();
-            _model.flipTiles(_model.getFlippableTiles(x,y,player2), player2);
-            _model.setPlayerAtPosition(player2, x, y);
-            _view.setCellImage(x, y);
-            yourTurn = true;
         }
+
     }
 
     @Override
     public void doYourTurn() {
         yourTurn = true;
-
         ArrayList<Integer> possibleMoves = _model.getPossibleMoves(player1);
 
         if (possibleMoves.size() == 0) {
@@ -122,6 +129,7 @@ public class ReversiController extends AbstractGame {
             Util.displayStatus("No possible moves.");
             return;
         }
+        _view.setStatus("It is your turn");
 
         if (player1 instanceof AI) {
             _model.clearPossibleMoves();
