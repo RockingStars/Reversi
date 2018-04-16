@@ -25,10 +25,7 @@ package com.rockingstar.modules.Reversi.controllers;
 import com.rockingstar.engine.ServerConnection;
 import com.rockingstar.engine.command.client.CommandExecutor;
 import com.rockingstar.engine.command.client.MoveCommand;
-import com.rockingstar.engine.game.AI;
-import com.rockingstar.engine.game.AbstractGame;
-import com.rockingstar.engine.game.Player;
-import com.rockingstar.engine.game.State;
+import com.rockingstar.engine.game.*;
 import com.rockingstar.engine.game.models.VectorXY;
 import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
@@ -56,6 +53,11 @@ public class ReversiController extends AbstractGame {
 
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
+
+        if (player1 instanceof OverPoweredAI)
+            ((OverPoweredAI) player1).setModel(_model);
+        else if (player1 instanceof Lech)
+            ((Lech) player1).setModel(_model);
     }
 
     @Override
@@ -173,6 +175,7 @@ public class ReversiController extends AbstractGame {
         }
 
         _model.setStartingPositions(player1, player2);
+        _view.updatePlayerColors();
     }
 
     public void getScores(){
@@ -190,11 +193,6 @@ public class ReversiController extends AbstractGame {
     }
 
     public char getColorP1(){
-        if (player1.getCharacter() == 'w'){
-            return 'w';
-        } else {
-            return 'b';
-        }
-
+        return player1.getCharacter();
     }
 }
