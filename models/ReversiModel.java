@@ -28,11 +28,11 @@ import com.rockingstar.modules.Reversi.views.ReversiView;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
 public class ReversiModel {
 
     private Player _ghost;
     private ReversiView _view;
+    private int counter1;
 
     private Player[][] _board = new Player[8][8];
 
@@ -51,10 +51,10 @@ public class ReversiModel {
         Player white = player1.getCharacter() == 'w' ? player1 : player2;
 
 
-        setPlayerAtPosition(white,3,3);
-        setPlayerAtPosition(black,3,4);
-        setPlayerAtPosition(black,4,3);
-        setPlayerAtPosition(white,4,4);
+        setPlayerAtPosition(white, 3, 3);
+        setPlayerAtPosition(black, 3, 4);
+        setPlayerAtPosition(black, 4, 3);
+        setPlayerAtPosition(white, 4, 4);
 
         for (int y = 3; y < 5; y++)
             for (int x = 3; x < 5; x++)
@@ -66,9 +66,9 @@ public class ReversiModel {
         return _board;
     }
 
-    public void flipTiles(LinkedList<Integer> tilesToFlip, Player player){
+    public void flipTiles(LinkedList<Integer> tilesToFlip, Player player) {
         for (Integer tile : tilesToFlip) {
-            setPlayerAtPosition(player, tile%8,tile/8);
+            setPlayerAtPosition(player, tile % 8, tile / 8);
             _view.setCellImage(tile % 8, tile / 8);
         }
     }
@@ -89,7 +89,7 @@ public class ReversiModel {
         LinkedList<Integer> tilesToFlip = new LinkedList<>();
 
         char currentPlayer = player.getCharacter();
-        char opponent = currentPlayer == 'b' ? 'w': 'b';
+        char opponent = currentPlayer == 'b' ? 'w' : 'b';
 
         if (!moveIsOnBoard(baseX,baseY) || board[baseX][baseY] != null) {
             System.out.println("Move is not on board, or the cell is already filled: " + (board[baseX][baseY] == null));
@@ -99,7 +99,7 @@ public class ReversiModel {
         // houd bij welke tiles geflipt moeten worden
         int counter = 0; //for debugging
 
-        for(int[] direction : DIRECTIONS) {
+        for (int[] direction : DIRECTIONS) {
             counter++;
 
             int x = baseX;
@@ -124,7 +124,7 @@ public class ReversiModel {
                         break;
                     }
                 }
-                if (!moveIsOnBoard(x, y)){
+                if (!moveIsOnBoard(x, y)) {
                     continue;
                 }
 
@@ -132,7 +132,7 @@ public class ReversiModel {
                     while(true){
                         x -= direction[0];
                         y -= direction[1];
-                        if(x == baseX && y == baseY){
+                        if (x == baseX && y == baseY) {
                             break;
                         }
                         tilesToFlip.add(y * 8 + x);
@@ -145,9 +145,7 @@ public class ReversiModel {
         return tilesToFlip;
     }
 
-
-    public boolean isValidMove(int x, int y, Player player){
-        //System.out.println("meer dan 0 flippable tiles? " + (getFlippableTiles(x, y, player).size() > 0));
+    public boolean isValidMove(int x, int y, Player player) {
         return getFlippableTiles(x, y, player).size() > 0;
     }
 
@@ -167,13 +165,13 @@ public class ReversiModel {
     public ArrayList<Integer> getPossibleMoves(Player player) {
         clearPossibleMoves();
         ArrayList<Integer> possibleMoves = new ArrayList<>();
-        for(int i = 0; i < _board.length; i++){
-            for(int j = 0; j < _board.length; j++){
-                if(_board[i][j] == null) {
+        for (int i = 0; i < _board.length; i++) {
+            for (int j = 0; j < _board.length; j++) {
+                if (_board[i][j] == null) {
                     if (isValidMove(i, j, player)) {
                         possibleMoves.add(j * 8 + i);
-                        setPlayerAtPosition(_ghost,i,j);
-                        _view.setCellImage(i,j);
+                        setPlayerAtPosition(_ghost, i, j);
+                        _view.setCellImage(i, j);
                         //System.out.printf("Move from player %s\n", player.getUsername());
                     }
                 }
@@ -233,16 +231,16 @@ public class ReversiModel {
                 _board[i][j] = null;
     }
 
-    public int[] getScore(){
+    public int[] getScore() {
         int[] scores = new int[2];
         scores[0] = 0;
         scores[1] = 0;
-        for (int i= 0; i <_board.length;i++){
-            for (int j = 0; j < _board[i].length; j++){
-                if (_board[i][j] != null){
-                    if (_board[i][j].getCharacter() == 'b'){
+        for (int i = 0; i < _board.length; i++) {
+            for (int j = 0; j < _board[i].length; j++) {
+                if (_board[i][j] != null) {
+                    if (_board[i][j].getCharacter() == 'b') {
                         scores[0]++;
-                    } else if(_board[i][j].getCharacter() == 'w'){
+                    } else if (_board[i][j].getCharacter() == 'w') {
                         scores[1]++;
                     }
                 }

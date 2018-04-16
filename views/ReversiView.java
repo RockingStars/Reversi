@@ -40,12 +40,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import java.awt.*;
 import java.net.URISyntaxException;
-import java.util.Timer;
+import com.rockingstar.engine.game.Timer;
 import java.util.TimerTask;
 
 public class ReversiView {
@@ -78,7 +76,6 @@ public class ReversiView {
     private Label _score2;
     private Button _colorImage1;
     private Button _colorImage2;
-    private int counter;
     private Label countLabel;
 
     // Bottom
@@ -94,6 +91,8 @@ public class ReversiView {
     GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     double width = graphicsDevice.getDisplayMode().getWidth();
     double height = graphicsDevice.getDisplayMode().getHeight();
+
+    private Timer _timerThread;
 
     public ReversiView(ReversiController controller) {
         _borderPane = new BorderPane();
@@ -112,48 +111,15 @@ public class ReversiView {
         _gameInfo.setId("gameInfo");
 
         _status = new Label();
-        _status.setFont(new Font(45));
-        _status.setTextFill(Color.TEAL);
-        _status.setId("titleText");
+        _status.getStyleClass().add("titleText");
 
         _errorStatus = new Label();
         _errorStatus.setId("errorStatus");
 
         countLabel = new Label();
-        countLabel.setId("titleText");
-        Timer timer = new Timer();
-        counter = 10;
-        TimerTask task = new TimerTask() {
+        countLabel.getStyleClass().add("titleText");
 
-            @Override
-            public void run() {
-                while (_controller.getIsYourTurn() == true){
-                    Platform.runLater(()  -> {
-                        countLabel.setText("" + counter);
-                        System.out.println("Hierzo: " + counter);
-                    });
-
-
-                    counter = counter - 1;
-                    if (counter < 1) {
-                        //Einde beurt
-                        counter = 10;
-                    }
-                }
-                counter = 10;
-
-                if (_isFinished){
-                    timer.cancel();
-                }
-            }
-        };
-        while (_controller.getIsYourTurn())
-            timer.scheduleAtFixedRate(task,1000,1000);
-
-
-        _timer = new Label("10 Seconden");
-        _timer.setId("timer");
-        _timer.setFont(new Font(30));
+        newTimerThread();
 
         _gameInfo.getChildren().addAll(_status, _errorStatus, countLabel);
 
@@ -339,5 +305,14 @@ public class ReversiView {
 
     public Label getP2Score(){
         return _player2Score;
+    }
+
+    public void newTimerThread(){
+       _timerThread = new Timer(countLabel);
+       _timerThread.start();
+    }
+
+    public void stopTimer(){
+        _timerThread.interrupt();
     }
 }
