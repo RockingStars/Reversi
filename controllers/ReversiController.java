@@ -24,6 +24,7 @@ package com.rockingstar.modules.Reversi.controllers;
 
 import com.rockingstar.engine.ServerConnection;
 import com.rockingstar.engine.command.client.CommandExecutor;
+import com.rockingstar.engine.command.client.ForfeitCommand;
 import com.rockingstar.engine.command.client.MoveCommand;
 import com.rockingstar.engine.game.*;
 import com.rockingstar.engine.game.models.VectorXY;
@@ -37,6 +38,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ReversiController extends AbstractGame {
 
@@ -50,22 +52,22 @@ public class ReversiController extends AbstractGame {
         _view = new ReversiView(this);
         _model = new ReversiModel(_view);
 
-        _model.addEventHandlers();
         _model.createCells();
 
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
 
+        addEventHandlers();
         setupBackgroundMusic();
         _backgroundMusic.start();
 
-        if (player1 instanceof OverPoweredAI) {
-            ((OverPoweredAI) player1).setCounter(0);
-            ((OverPoweredAI) player1).setModel(_model);
-            ((OverPoweredAI) player1).setController(this);
+        if (player1 instanceof HardAI) {
+            ((HardAI) player1).setCounter(0);
+            ((HardAI) player1).setModel(_model);
+            ((HardAI) player1).setController(this);
         }
-        else if (player1 instanceof Lech)
-            ((Lech) player1).setModel(_model);
+        else if (player1 instanceof EasyAI)
+            ((EasyAI) player1).setModel(_model);
     }
 
     @Override
@@ -104,7 +106,7 @@ public class ReversiController extends AbstractGame {
         Platform.runLater(() -> getScores());
         if (!(getGameState() == State.GAME_FINISHED)) {
             if (yourTurn) {
-                Platform.runLater(() -> getScores());//Waar moet deze??
+                Platform.runLater(() -> getScores());
                 yourTurn = false;
                 _view.stopTimer();
                 _view.newTimerThread();
@@ -119,13 +121,14 @@ public class ReversiController extends AbstractGame {
                 _model.flipTiles(_model.getFlippableTiles(x, y, player2), player2);
                 _model.setPlayerAtPosition(player2, x, y);
                 _view.setCellImage(x, y);
-                
+
                 _view.newTimerThread();
             }
+        }
     }
 
     @Override
-    public void doYourTurn() {
+    public void doYourTurn () {
         yourTurn = true;
         ArrayList<Integer> possibleMoves = _model.getPossibleMoves(player1);
 
@@ -151,7 +154,7 @@ public class ReversiController extends AbstractGame {
     }
 
     @Override
-    public void gameEnded(String result) {
+    public void gameEnded (String result){
         Platform.runLater(() -> getScores());
         super.gameEnded(result);
         _view.setIsFinished(true);
@@ -184,6 +187,7 @@ public class ReversiController extends AbstractGame {
 
     }
 
+
     public void setStartingPlayer(Player player) {
         player1.setCharacter(player.getUsername().equals(player1.getUsername()) ? 'b' : 'w');
         player2.setCharacter(player1.getCharacter() == 'b' ? 'w' : 'b');
@@ -196,6 +200,22 @@ public class ReversiController extends AbstractGame {
 
         _model.setStartingPositions(player1, player2);
         _view.updatePlayerColors();
+    }
+
+    public void addEventHandlers() {
+        _view.getEndButton().setOnAction(e ->{
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Closing game");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to give up?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                CommandExecutor.execute(new ForfeitCommand(ServerConnection.getInstance()));
+            }
+        });
+
+        _view.getRageQuitButton().setOnAction(e -> Platform.exit());
     }
 
     public void getScores(){
