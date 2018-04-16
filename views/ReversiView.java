@@ -84,7 +84,6 @@ public class ReversiView {
     // Bottom
     private HBox _buttons;
     private Button _endButton;
-    private Button _newGameButton;
     private Button _rageQuit;
     private Button _hanze;
 
@@ -132,13 +131,14 @@ public class ReversiView {
                 while (_controller.getIsYourTurn() == true){
                     Platform.runLater(()  -> {
                         countLabel.setText("" + counter);
+                        System.out.println("Hierzo: " + counter);
                     });
 
-                    System.out.println("Deze : " + counter);
+
                     counter = counter - 1;
                     if (counter < 1) {
                         //Einde beurt
-                        //counter = 10;
+                        counter = 10;
                     }
                 }
                 counter = 10;
@@ -156,12 +156,13 @@ public class ReversiView {
         _timer.setId("timer");
         _timer.setFont(new Font(30));
 
-        _gameInfo.getChildren().addAll(_status, _errorStatus, countLabel ,_timer);
+        _gameInfo.getChildren().addAll(_status, _errorStatus, countLabel);
 
         //Player 1
         _player1Info = new VBox(30);
         _player1Info.setPadding(new Insets(50));
         _player1Info.setMinWidth(width/10);
+        _player1Info.setAlignment(Pos.CENTER);
         _player1Info.setId("p1info");
 
         _name1 = new Label("Player:");
@@ -195,8 +196,7 @@ public class ReversiView {
 
         //Player2
         _player2Info = new VBox(30);
-        _player2Info.setPadding(new Insets(50));
-        _player2Info.setAlignment(Pos.BASELINE_RIGHT);
+        _player2Info.setAlignment(Pos.CENTER);
         _player2Info.setMinWidth(width/10);
         _player2Info.setId("p2info");
 
@@ -225,8 +225,8 @@ public class ReversiView {
         _player1Info.getChildren().addAll(_name1, _player1Name, _score1, _player1Score, _player1Color, _colorImage1);
         _player2Info.getChildren().addAll(_name2, _player2Name, _score2,_player2Score, _player2Color, _colorImage2);
 
-        _endButton = new Button("End game");
-        _newGameButton = new Button("New game");
+        _endButton = new Button("Forfeit");
+        _endButton.setId("forfeit");
         _rageQuit = new Button("");
         _rageQuit.setId("rageQuit");
         _rageQuit.setMinWidth(172);
@@ -249,7 +249,7 @@ public class ReversiView {
         _buttons.setSpacing(60.0);
         _buttons.setMinHeight(50);
         _buttons.setAlignment(Pos.CENTER);
-        _buttons.getChildren().addAll(_newGameButton, _endButton, _hanze, _rageQuit);
+        _buttons.getChildren().addAll(_endButton, _hanze, _rageQuit);
 
         _borderPane.setTop(_gameInfo);
         _borderPane.setLeft(_player1Info);
@@ -321,10 +321,6 @@ public class ReversiView {
 
             _pane.add(imageView, x, y);
         });
-    }
-
-    public Button getNewGameButton() {
-        return _newGameButton;
     }
 
     public Button getRageQuitButton(){
