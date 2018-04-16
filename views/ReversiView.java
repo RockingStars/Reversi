@@ -133,7 +133,7 @@ public class ReversiView {
         _name1 = new Label("Player:");
         _name1.getStyleClass().add("titles");
 
-        _player1Name = new Label(_controller.player1Name());
+        _player1Name = new Label(_controller.getPlayer1Name());
         _player1Name.getStyleClass().add("players");
 
         _score1 = new Label("Score:");
@@ -158,7 +158,7 @@ public class ReversiView {
         _name2 = new Label("Player:");
         _name2.getStyleClass().add("titles");
 
-        _player2Name = new Label(_controller.player2Name());
+        _player2Name = new Label(_controller.getPlayer2Name());
         _player2Name.getStyleClass().add("players");
         _score2 = new Label("Score:");
         _score2.getStyleClass().add("titles");
