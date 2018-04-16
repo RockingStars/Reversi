@@ -56,9 +56,6 @@ public class ReversiController extends AbstractGame {
 
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
-
-        if (player1 instanceof AI)
-            ((AI) player1).setModel(_model);
     }
 
     @Override
