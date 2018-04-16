@@ -54,8 +54,11 @@ public class ReversiController extends AbstractGame {
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
 
-        if (player1 instanceof OverPoweredAI)
+        if (player1 instanceof OverPoweredAI) {
+            ((OverPoweredAI) player1).setCounter(0);
             ((OverPoweredAI) player1).setModel(_model);
+            ((OverPoweredAI) player1).setController(this);
+        }
         else if (player1 instanceof Lech)
             ((Lech) player1).setModel(_model);
         else if (player1 instanceof MinimaxAI) {
@@ -74,14 +77,15 @@ public class ReversiController extends AbstractGame {
         _model.clearPossibleMoves();
         if (!(getGameState() == State.GAME_FINISHED)) {
             if (yourTurn) {
+                Util.displayStatus("Amount of flippable tiles: " + _model.getFlippableTiles(x,y,player1));
                 if (_model.isValidMove(x, y, player1)) {
-
                     _model.flipTiles(_model.getFlippableTiles(x,y,player1), player1);
                     _model.setPlayerAtPosition(player1, x, y);
                     _view.setCellImage(x, y);
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
                 }
                 else {
+                    System.out.println("Not a valid move");
                     _view.setErrorStatus("Invalid move");
                     _model.getPossibleMoves(player1);
                 }
@@ -119,7 +123,7 @@ public class ReversiController extends AbstractGame {
         ArrayList<Integer> possibleMoves = _model.getPossibleMoves(player1);
 
         if (possibleMoves.size() == 0) {
-            if(getGameState() != State.GAME_FINISHED){
+            if (getGameState() != State.GAME_FINISHED) {
                 CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance()));
             }
 
@@ -130,8 +134,11 @@ public class ReversiController extends AbstractGame {
         if (player1 instanceof AI) {
             _model.clearPossibleMoves();
             VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
+
             Util.displayStatus("AI MOVE: " + coordinates.x + ", " + coordinates.y);
+            //Util.displayStatus("Player at position: " + coordinates.x + ", " + coordinates.y + " : " + _model.getBoard()[coordinates.x][coordinates.y].getCharacter());
             doPlayerMove(coordinates.x, coordinates.y);
+
         }
     }
 
