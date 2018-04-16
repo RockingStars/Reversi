@@ -61,10 +61,6 @@ public class ReversiController extends AbstractGame {
         }
         else if (player1 instanceof Lech)
             ((Lech) player1).setModel(_model);
-        else if (player1 instanceof MinimaxAI) {
-            ((MinimaxAI) player1).setModel(_model);
-            ((MinimaxAI) player1).setController(this);
-        }
     }
 
     @Override
@@ -124,11 +120,10 @@ public class ReversiController extends AbstractGame {
 
         if (possibleMoves.size() == 0) {
             if (getGameState() != State.GAME_FINISHED) {
-                CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance()));
+                yourTurn = false;
+                Util.displayStatus("No possible moves.");
+                return;
             }
-
-            Util.displayStatus("No possible moves.");
-            return;
         }
 
         if (player1 instanceof AI) {
