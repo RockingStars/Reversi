@@ -95,7 +95,6 @@ public class ReversiController extends AbstractGame {
     public void doPlayerMove(int position) {
         Platform.runLater(() -> getScores());
         if (!(getGameState() == State.GAME_FINISHED)) {
-
             if (yourTurn) {
                 yourTurn = false;
                 return;
@@ -108,7 +107,7 @@ public class ReversiController extends AbstractGame {
             _model.flipTiles(_model.getFlippableTiles(x,y,player2), player2);
             _model.setPlayerAtPosition(player2, x, y);
             _view.setCellImage(x, y);
-            yourTurn = true;
+            //yourTurn = true;
         }
     }
 
@@ -121,7 +120,7 @@ public class ReversiController extends AbstractGame {
         if (possibleMoves.size() == 0) {
             if (getGameState() != State.GAME_FINISHED) {
                 yourTurn = false;
-                Util.displayStatus("No possible moves.");
+                Util.displayStatus("No possible moves left, switching turns");
                 return;
             }
         }
