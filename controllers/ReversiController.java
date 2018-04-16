@@ -58,6 +58,10 @@ public class ReversiController extends AbstractGame {
             ((OverPoweredAI) player1).setModel(_model);
         else if (player1 instanceof Lech)
             ((Lech) player1).setModel(_model);
+        else if (player1 instanceof MinimaxAI) {
+            ((MinimaxAI) player1).setModel(_model);
+            ((MinimaxAI) player1).setController(this);
+        }
     }
 
     @Override
@@ -126,6 +130,7 @@ public class ReversiController extends AbstractGame {
         if (player1 instanceof AI) {
             _model.clearPossibleMoves();
             VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
+            Util.displayStatus("AI MOVE: " + coordinates.x + ", " + coordinates.y);
             doPlayerMove(coordinates.x, coordinates.y);
         }
     }
@@ -184,15 +189,23 @@ public class ReversiController extends AbstractGame {
         _view.getP2Score().setText("" + scores[player2.getCharacter() == 'b' ? 0 : 1]);
     }
 
-    public String player1Name(){
+    public String getPlayer1Name(){
         return player1.getUsername();
     }
 
-    public String player2Name(){
+    public String getPlayer2Name(){
         return player2.getUsername();
     }
 
     public char getColorP1(){
         return player1.getCharacter();
+    }
+
+    public Player getPlayer1(){
+        return player1;
+    }
+
+    public Player getPlayer2(){
+        return player2;
     }
 }
