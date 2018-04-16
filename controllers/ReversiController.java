@@ -27,6 +27,7 @@ import com.rockingstar.engine.command.client.CommandExecutor;
 import com.rockingstar.engine.command.client.MoveCommand;
 import com.rockingstar.engine.game.*;
 import com.rockingstar.engine.game.models.VectorXY;
+import com.rockingstar.engine.gui.controllers.AudioPlayer;
 import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.models.ReversiModel;
 import com.rockingstar.modules.Reversi.views.ReversiView;
@@ -41,6 +42,7 @@ public class ReversiController extends AbstractGame {
 
     private ReversiModel _model;
     private ReversiView _view;
+    private AudioPlayer _backgroundMusic;
 
     public ReversiController(Player player1, Player player2) {
         super(player1, player2);
@@ -54,6 +56,9 @@ public class ReversiController extends AbstractGame {
         _view.setBoard(_model.getBoard());
         _view.generateBoardVisual();
 
+        setupBackgroundMusic();
+        _backgroundMusic.start();
+
         if (player1 instanceof OverPoweredAI)
             ((OverPoweredAI) player1).setModel(_model);
         else if (player1 instanceof Lech)
@@ -63,6 +68,7 @@ public class ReversiController extends AbstractGame {
     @Override
     public Node getView() {
         return _view.getNode();
+
     }
 
     @Override
@@ -94,6 +100,7 @@ public class ReversiController extends AbstractGame {
         Platform.runLater(() -> getScores());
         if (!(getGameState() == State.GAME_FINISHED)) {
             if (yourTurn) {
+                Platform.runLater(() -> getScores());//Waar moet deze??
                 yourTurn = false;
                 _view.stopTimer();
                 _view.newTimerThread();
@@ -190,6 +197,10 @@ public class ReversiController extends AbstractGame {
         int[] scores = _model.getScore();
         _view.getP1Score().setText("" + scores[player1.getCharacter() == 'b' ? 0 : 1]);
         _view.getP2Score().setText("" + scores[player2.getCharacter() == 'b' ? 0 : 1]);
+    }
+
+    private void setupBackgroundMusic() {
+        _backgroundMusic = new AudioPlayer("ReversiMusic.mp3", true);
     }
 
     public String player1Name(){
