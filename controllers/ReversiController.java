@@ -117,7 +117,7 @@ public class ReversiController extends AbstractGame {
                     _model.setPlayerAtPosition(player1, x, y);
                     _view.setCellImage(x, y);
                     CommandExecutor.execute(new MoveCommand(ServerConnection.getInstance(), y * 8 + x));
-                    _view.setStatus("It is not your turn");
+                    _view.setStatus("Opponent's turn");
                 }
                 else {
                     System.out.println("Not a valid move");
@@ -142,11 +142,11 @@ public class ReversiController extends AbstractGame {
             if (yourTurn) {
                 Platform.runLater(() -> getScores());
                 yourTurn = false;
-                _view.stopTimer();
-                _view.newTimerThread();
+                //_view.stopTimer();
+                //_view.newTimerThread();
                 return;
             } else {
-                _view.stopTimer();
+                //_view.stopTimer();
 
                 int x = position % 8;
                 int y = position / 8;
@@ -156,7 +156,7 @@ public class ReversiController extends AbstractGame {
                 _model.setPlayerAtPosition(player2, x, y);
                 _view.setCellImage(x, y);
 
-                _view.newTimerThread();
+                //_view.newTimerThread();
             }
         }
     }
@@ -224,6 +224,7 @@ public class ReversiController extends AbstractGame {
             returnToLobby.showAndWait();
 
             if (returnToLobby.getResult() == ButtonType.OK)
+                _backgroundMusic.end();
                 toLobby();
         });
 
@@ -251,7 +252,7 @@ public class ReversiController extends AbstractGame {
      * Adds event handlers to the view
      */
     private void addEventHandlers() {
-        _view.getEndButton().setOnAction(e ->{
+        _view.getForfeitButton().setOnAction(e ->{
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Closing game");
             alert.setHeaderText(null);
@@ -263,7 +264,7 @@ public class ReversiController extends AbstractGame {
             }
         });
 
-        _view.getRageQuitButton().setOnAction(e -> Platform.exit());
+        _view.getRageQuitButton().setOnAction(e -> System.exit(0));
     }
 
     /**
