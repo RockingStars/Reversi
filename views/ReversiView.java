@@ -24,6 +24,7 @@ package com.rockingstar.modules.Reversi.views;
 
 import com.rockingstar.engine.game.AI;
 import com.rockingstar.engine.game.Player;
+import com.rockingstar.engine.game.Timer;
 import com.rockingstar.engine.io.models.Util;
 import com.rockingstar.modules.Reversi.controllers.ReversiController;
 import javafx.application.Platform;
@@ -43,8 +44,6 @@ import javafx.scene.layout.VBox;
 
 import java.awt.*;
 import java.net.URISyntaxException;
-import com.rockingstar.engine.game.Timer;
-import java.util.TimerTask;
 
 public class ReversiView {
 
@@ -80,7 +79,7 @@ public class ReversiView {
 
     // Bottom
     private HBox _buttons;
-    private Button _endButton;
+    private Button _forfeitButton;
     private Button _rageQuit;
     private Button _hanze;
 
@@ -119,7 +118,7 @@ public class ReversiView {
         countLabel = new Label();
         countLabel.getStyleClass().add("titleText");
 
-        newTimerThread();
+        //newTimerThread();
 
         _gameInfo.getChildren().addAll(_status, _errorStatus, countLabel);
 
@@ -175,8 +174,8 @@ public class ReversiView {
         _player1Info.getChildren().addAll(_name1, _player1Name, _score1, _player1Score, _player1Color, _colorImage1);
         _player2Info.getChildren().addAll(_name2, _player2Name, _score2,_player2Score, _player2Color, _colorImage2);
 
-        _endButton = new Button("Forfeit");
-        _endButton.setId("forfeit");
+        _forfeitButton = new Button("Forfeit");
+        _forfeitButton.setId("forfeit");
 
         _rageQuit = new Button("");
         _rageQuit.setId("rageQuit");
@@ -197,7 +196,7 @@ public class ReversiView {
         _buttons.setSpacing(60.0);
         _buttons.setMinHeight(50);
         _buttons.setAlignment(Pos.CENTER);
-        _buttons.getChildren().addAll(_endButton, _hanze, _rageQuit);
+        _buttons.getChildren().addAll(_forfeitButton, _hanze, _rageQuit);
 
         _borderPane.setTop(_gameInfo);
         _borderPane.setLeft(_player1Info);
@@ -215,8 +214,8 @@ public class ReversiView {
                 setCellImage(i, j);
     }
 
-    public Button getEndButton() {
-        return _endButton;
+    public Button getForfeitButton() {
+        return _forfeitButton;
     }
 
     public void setCellImage(int x, int y) {
