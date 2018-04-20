@@ -185,9 +185,7 @@ public class ReversiController extends AbstractGame {
             VectorXY coordinates = ((AI) player1).getMove(player1, possibleMoves);
 
             Util.displayStatus("AI MOVE: " + coordinates.x + ", " + coordinates.y);
-            //Util.displayStatus("Player at position: " + coordinates.x + ", " + coordinates.y + " : " + _model.getBoard()[coordinates.x][coordinates.y].getCharacter());
             doPlayerMove(coordinates.x, coordinates.y);
-
         }
     }
 
@@ -196,7 +194,7 @@ public class ReversiController extends AbstractGame {
      * @param result The result of the game (WIN< LOSS or DRAW)
      */
     @Override
-    public void gameEnded (String result){
+    public void gameEnded(String result){
         Platform.runLater(() -> getScores());
         super.gameEnded(result);
         _view.setIsFinished(true);
@@ -227,7 +225,6 @@ public class ReversiController extends AbstractGame {
                 _backgroundMusic.end();
                 toLobby();
         });
-
     }
 
     /**

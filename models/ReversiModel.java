@@ -157,12 +157,7 @@ public class ReversiModel {
             return tilesToFlip;
         }
 
-        // houd bij welke tiles geflipt moeten worden
-        int counter = 0; //for debugging
-
         for (int[] direction : DIRECTIONS) {
-            counter++;
-
             int x = baseX;
             int y = baseY;
 
